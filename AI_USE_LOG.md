@@ -436,3 +436,16 @@ GitHub CLI is not logged in and no local client SSH key is available. Codex
 requested host-side GitHub authentication from the user and prepared a local
 Git commit/bundle so the verified work remains ready for upload. No token was
 requested in chat, extracted from the connector or written into project files.
+
+
+### GitHub upload completed — November 7, 2026
+
+The user completed GitHub CLI web authentication on Artemisia. Codex verified
+that the active account was vvenka25, pushed the prepared project to `main`
+using Git over HTTPS and checked that the remote main ref matched project
+commit d0918b07821218c1b4e54b3df74f6bdf51a81094. The repository includes the
+requested source/scripts, project Markdown, AI-use log, checklists, activity
+logs, report/plots and hash-indexed raw evidence. No credential or private
+signing key is committed. The original full Q4 archive and final submission
+ZIP remain unchanged locally. The initial connector HTTP 403 and the resolved
+authentication requirement remain recorded as history rather than pending work.
