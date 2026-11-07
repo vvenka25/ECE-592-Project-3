@@ -17,5 +17,8 @@
   "original_reference_use": "format/structure/explanation only; no P1 content is a generator input",
   "new_performance_campaigns": false,
   "revised_submission_candidate": "passed: CRC, required source/dependency/raw/report artifacts, final evidence guards and clean-extracted Q4 preservation",
-  "revised_submission_candidate_q4": "825 preserved Q4 files unchanged; original archive hash verified; 20 build files verified from archive only. Project README/AI log updates are separate."
+  "revised_submission_candidate_q4": "825 preserved Q4 files unchanged; original archive hash verified; 20 build files verified from archive only. Project README/AI log updates are separate.",
+  "github_report_commit": "b9e6faed21dbc967dd92e8ec0206b60798124795",
+  "github_remote_ref": "verified on main",
+  "public_source_rebuild": "passed: restored 5330 files, public Q4 805, regenerated tables/listings/figures, two-pass compilation; tables/listings and 19-page PDF text identical"
 }

@@ -18,7 +18,7 @@
 - [x] Remove orphan evidence pages and clipped figure labels; compile with no layout/undefined-reference warnings.
 - [x] Finish a clean extracted Overleaf-bundle compilation and artifact hash checks: two pdfLaTeX passes, identical 19-page text, 55 bundle files and 2,261 input hashes verified.
 - [x] Assemble and verify the revised source/raw-data/report submission ZIP without overwriting the earlier ZIP: candidate CRC, artifact/dependency presence, evidence guards and clean-extracted Q4 preservation pass.
-- [ ] Synchronize the revised report/source/figures and documentation to GitHub.
+- [x] Synchronize the revised report/source/figures and documentation to GitHub; main ref verified and the public source tree rebuilt from restored raw data with identical tables, listings and 19-page PDF text.
 - [ ] Directly upload to Overleaf: unavailable without a supported authenticated connection; a source ZIP is supplied instead.
 
 The last item is an external publication limitation, not missing experimental
