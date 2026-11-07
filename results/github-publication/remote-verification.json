@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/vvenka25/ECE-592-Project-3",
+  "branch": "main",
+  "commit": "eb2595aa0f58fe45de26fc178b1551fcaa7ddc33",
+  "tree": "ce6556b0007f42e7073706791709b6b0d39ca707",
+  "fresh_clone": "passed; exact prepared commit/tree",
+  "tracked_files": 926,
+  "raw_restore": "5330 files hash-verified and restored",
+  "public_q4_check": "805 immutable files passed",
+  "checkout_after_restoration": "clean",
+  "required_documentation_and_artifacts": "present",
+  "original_local_q4_check": "825 files unchanged",
+  "original_local_submission_zip": "unchanged"
+}
