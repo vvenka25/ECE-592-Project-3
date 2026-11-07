@@ -24,3 +24,7 @@ pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report report
 ```
 
 The report's source and actual evidence paths are tracked by `report/submission-status.json`. Final packaging (`python3 trackb/package.py --out submissions/HW3_Track_B_105_Varunaditya_Venkatesan.zip`) checks the selection, first page, native evidence on both machines, Artemisia hardware-enclave evidence and Q4 preservation. `--draft` is reserved for explicitly incomplete future work. Scientific attribution limits remain stated in the report rather than filled with guessed or published counts.
+
+## Reference-guided revision
+
+The current 19-page report follows Q1, Q2, Q3, Q4, Q5, Q8 in numerical order, after a first-page title/author/course/selection/abstract block and common setup. Each question keeps concrete kernel details, actual source excerpts, its five-part methodology graphic, generated tables/results and interpretation adjacent. Q5 additionally shows the complete coarse controls. The final sections cover limits, reproduction, Overleaf source delivery, submission files and AI use. GitHub and the normal Overleaf project URL appear on page one. See `report/README.md` and `report/REVISION_CHECKLIST.md`; the historical implementation order remains Q3 → Q1 → Q2 → Q5 → Q8.

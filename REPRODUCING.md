@@ -55,6 +55,8 @@ python3 report/plot_q4_comparison.py --out results/reproduced-q4
 python3 trackb/review.py results/q5-fine-artemisia results/q5-fine-charnwood-private --out results/reproduced-q5
 python3 trackb/review.py results/q8-clock-artemisia results/q8-clock-charnwood-private --out results/reproduced-q8
 python3 trackb/test_analysis.py
+MPLCONFIGDIR=/tmp/hw3-matplotlib python3 report/make_report_artifacts.py
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report report/report.tex
 pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report report/report.tex
 ```
 
@@ -99,7 +101,7 @@ Example on Artemisia, after checking that CPU 12/node 0 and its offline sibling
 are still appropriate:
 
 ```bash
-python3 trackb/run.py --question 3 --cpu 12 --numa-node 0 --environment both --require-idle-sibling --out results/new-q3-artemisia
+python3 trackb/run.py --question Q3 --cpu 12 --numa-node 0 --environment both --require-idle-sibling --out results/new-q3-artemisia
 # Review the plan, then run it using the same options plus --execute.
 ```
 
@@ -151,3 +153,7 @@ be made with `python3 trackb/package.py --out submissions/reproduced-submission.
 That archive uses the public source-only preservation derivative. The original
 full local submission ZIP is a separate historical artifact and is not
 overwritten or claimed byte-identical.
+
+## Revised report and Overleaf source
+
+The current 19-page report uses the provided Project 1 PDF only for format and explanation style; its measurements and original artwork come from Homework 3. See [report/README.md](report/README.md), [the revision checklist](report/REVISION_CHECKLIST.md), and `report/make_report_artifacts.py`. `python3 report/package_overleaf.py` creates a self-contained `main.tex` bundle with all vector figures, tables and listings. It is compiled from a clean extraction locally; direct upload to the user-designated Overleaf project requires an authenticated editing connection unavailable to the agent. The normal project URL is on page one. No completed hardware campaign is rerun by the report commands.

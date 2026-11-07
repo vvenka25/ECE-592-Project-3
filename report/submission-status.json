@@ -105,5 +105,27 @@
     "Q5": "results/q5-fine-artemisia/manifest.json",
     "Q8": "results/q8-clock-artemisia/manifest.json"
   },
-  "author": "Varunaditya Venkatesan"
+  "author": "Varunaditya Venkatesan",
+  "report_revision": {
+    "date": "2026-11-07",
+    "format_reference": "ece592_proj1_clclark7_vvenka25.pdf",
+    "format_reference_sha256": "a63c544633c890c4cb2a0d378be4e53bc041876f19befb797666744f521f6d5d",
+    "assignment_authority": "Homework_3.pdf",
+    "assignment_sha256": "d4b598df6ffb2466a62aebf872876f9ff6bd70edea48ce25e27a851680d1da83",
+    "questions_in_report_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      8
+    ],
+    "report_pages": 19,
+    "new_performance_campaigns": false,
+    "generated_input_audit": "report/generated/artifact-audit.json",
+    "github": "https://github.com/vvenka25/ECE-592-Project-3",
+    "overleaf": "https://www.overleaf.com/project/6aeeb80e5d4ccedd231a327b",
+    "overleaf_direct_upload": false,
+    "sample_enclave_setup": "user-confirmed HW/debug success; original console log not saved; custom hardware benchmark checks retained"
+  }
 }

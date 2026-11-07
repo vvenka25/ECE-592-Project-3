@@ -1,0 +1,109 @@
+{
+  "selected_questions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    8
+  ],
+  "total_points": 105,
+  "q4_project_status": "completed",
+  "report_pdf": "report/report.pdf",
+  "report_is_final": true,
+  "native_evidence": {
+    "Q1": {
+      "Charnwood": [
+        "results/q1-charnwood-private/manifest.json"
+      ],
+      "Artemisia": [
+        "results/q1-artemisia/manifest.json"
+      ]
+    },
+    "Q2": {
+      "Charnwood": [
+        "results/q2-charnwood-private/manifest.json"
+      ],
+      "Artemisia": [
+        "results/q2-artemisia-retry/manifest.json"
+      ]
+    },
+    "Q3": {
+      "Charnwood": [
+        "results/q3-charnwood-private/manifest.json"
+      ],
+      "Artemisia": [
+        "results/q3-artemisia/manifest.json"
+      ]
+    },
+    "Q4": {
+      "Charnwood": [
+        "results/q4-coarse-charnwood/manifest.json",
+        "results/q4-fine-charnwood/manifest.json",
+        "results/q4-fine-repeat-charnwood/manifest.json"
+      ],
+      "Artemisia": [
+        "results/v2-fine/manifest.json",
+        "results/v2-fine-repeat/manifest.json"
+      ]
+    },
+    "Q5": {
+      "Charnwood": [
+        "results/q5-charnwood-private/manifest.json",
+        "results/q5-fine-charnwood-private/manifest.json"
+      ],
+      "Artemisia": [
+        "results/q5-scaled-residency-artemisia/manifest.json",
+        "results/q5-fine-artemisia/manifest.json"
+      ]
+    },
+    "Q8": {
+      "Charnwood": [
+        "results/q8-clock-charnwood-private/manifest.json"
+      ],
+      "Artemisia": [
+        "results/q8-clock-artemisia/manifest.json"
+      ]
+    }
+  },
+  "enclave_evidence": {
+    "Q1": [
+      "results/q1-artemisia/manifest.json"
+    ],
+    "Q2": [
+      "results/q2-artemisia-retry/manifest.json"
+    ],
+    "Q3": [
+      "results/q3-artemisia/manifest.json"
+    ],
+    "Q4": [
+      "results/v2-fine/manifest.json",
+      "results/v2-fine-repeat/manifest.json"
+    ],
+    "Q5": [
+      "results/q5-scaled-residency-artemisia/manifest.json",
+      "results/q5-fine-artemisia/manifest.json"
+    ],
+    "Q8": [
+      "results/q8-clock-artemisia/manifest.json"
+    ]
+  },
+  "limitations": [
+    "Q5 is a conditional effective integer-destination pressure bound; precise PRF-versus-scheduler attribution and conversion to total physical capacity are unproven.",
+    "Q8 native costs use simultaneous active-core-cycle counts and validated miss/cache rates; TSC costs are withheld when effective clock/preemption proxies fail. Enclave STLB-event coverage remains unqualified.",
+    "Artemisia new work used CPU 12/node 0 with sibling 68 offline; Charnwood CPU 1/node 0 used private core scheduling with controller isolation. Legacy Charnwood Q4 helper mask also permits CPU 1; its recorded preemptions are retained.",
+    "Kernel/interrupt/AEX activity, frequency changes, physical EPC NUMA placement and host-wide LLC/memory interference are incompletely controlled.",
+    "Stopped NUMA-accounting/SMT/setup attempts and the rejected Q2/constant-offset-LEA prototypes remain separately preserved.",
+    "Charnwood has no /dev/sgx_enclave, /dev/sgx/enclave or /dev/isgx; applicable same-machine enclave comparisons use Artemisia.",
+    "The user confirmed Charnwood Q4 had not been done; it was added using unchanged protected Q4 source. No Artemisia Q4 rerun or rewrite occurred.",
+    "Charnwood SSH used first-connection host-key pinning after the user supplied the destination; later checks were strict. The key was not independently authenticated against an external fingerprint."
+  ],
+  "hardware_validation": {
+    "Q1": "results/trackb-hardware-validation/manifest.json",
+    "Q2": "results/trackb-hardware-validation/manifest.json",
+    "Q3": "results/trackb-hardware-validation/manifest.json",
+    "Q5": "results/q5-fine-artemisia/manifest.json",
+    "Q8": "results/q8-clock-artemisia/manifest.json"
+  },
+  "author": "Varunaditya Venkatesan"
+}

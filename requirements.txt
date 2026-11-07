@@ -1,2 +1,2 @@
-# Version used for the archived figures; Python 3.9 or newer.
+# Analysis/figure version used for the retained HW3 plots.
 matplotlib==3.9.4

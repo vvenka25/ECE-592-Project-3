@@ -1,0 +1,21 @@
+{
+  "checked_utc": "2026-11-07T06:25:54.506017+00:00",
+  "report_pages": 19,
+  "first_page": "author/course/six questions/105/GitHub/Overleaf verified",
+  "generated_input_hashes": 2261,
+  "generated_input_hashes_pass": true,
+  "generated_source_excerpts": "verified against generators and retained excerpt hashes",
+  "latex_warnings": "none; two-pass references resolved",
+  "render_review": "all pages reviewed as contact sheets; title/setup/method/Q8 examined full-size; orphan pages and clipped axis fixed",
+  "overleaf_source_files": 55,
+  "overleaf_zip_sha256": "e9c75cd479e79b5773221e7f1113a7c12f286f8b3d150165ef4476e248869511",
+  "overleaf_clean_extracted_compile": "passed twice; PDF text identical to local 19-page report",
+  "overleaf_direct_upload": false,
+  "q4_preservation": "825 preserved Q4 files unchanged; original archive hash verified; 0 build files verified from archive only. Project README/AI log updates are separate.",
+  "earlier_submission_zip_sha256_unchanged": "4f4b599381c58f3e638c78d3a6125625c133d4714cc5716954f809da2c7ac44c",
+  "sample_enclave_console_log": "user confirmed not saved; setup success labeled user-confirmed",
+  "original_reference_use": "format/structure/explanation only; no P1 content is a generator input",
+  "new_performance_campaigns": false,
+  "revised_submission_candidate": "passed: CRC, required source/dependency/raw/report artifacts, final evidence guards and clean-extracted Q4 preservation",
+  "revised_submission_candidate_q4": "825 preserved Q4 files unchanged; original archive hash verified; 20 build files verified from archive only. Project README/AI log updates are separate."
+}

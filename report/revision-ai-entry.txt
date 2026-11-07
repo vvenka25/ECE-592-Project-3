@@ -1,0 +1,39 @@
+
+
+## Reference-guided report revision — November 7, 2026
+
+At the user's request, Codex read ece592_proj1_clclark7_vvenka25.pdf for format,
+structure and experiment-explanation style, including visual inspection of its
+title and numbered methodology panels on pages 3–6. It read Homework_3.pdf
+as the authority for Track B and common requirements. Project 1 prose, data,
+code, artwork, conclusions and assignment-specific phases were not reused.
+All numerical evidence and source excerpts come from completed Homework 3
+artifacts; no performance campaign was rerun for this writing revision.
+
+Codex rewrote the report in question order Q1/Q2/Q3/Q4/Q5/Q8, with the author,
+ECE 592/Track B identity, 105-point selection, compact abstract and GitHub/
+normal Overleaf URLs on page one. It added two SGX setup/motivation paragraphs,
+actual enclave configurations and explicit paired-run/timing/placement details.
+The user confirmed that the original SampleEnclave console log was not saved;
+that setup success is labeled user-confirmed, separate from retained custom
+hardware-enclave validation logs. The distinct CPU-1/uncontrolled-SMT Q4
+history is preserved rather than relabeled as the newer CPU-12 protocol.
+
+The new report generator reads completed raw campaigns through the existing
+validation/analysis helpers and writes traceable LaTeX tables, processed CSVs,
+input hashes, six original five-part methodology diagrams, seven result/control
+plots and the shared timer diagram, with PDF/SVG/PNG outputs. Short actual
+assembly excerpts are regenerated from the HW3 generators, with repeated bodies
+explicitly omitted and provenance recorded. Q5's additional coarse-control
+figure supports its conditional integer-GPR pressure bound; exact total PRF
+conversion and enclave TLB-miss attribution remain unproved. Published models
+and interface documentation remain separate from measured findings.
+
+The 19-page PDF was built and rendered. Codex reviewed all pages and detailed
+title/setup/method/results views, corrected orphan evidence pages and a clipped
+axis label, and checked the LaTeX log for layout/undefined-reference warnings.
+A self-contained Overleaf bundle is provided for local compilation/upload.
+No supported authenticated Overleaf editing connection was available, so no
+direct upload is claimed. Its normal project URL omits the sharing token.
+The previous report is retained under report/history; the original Q4 source,
+raw data, original figures/analysis and earlier submission ZIP remain unchanged.

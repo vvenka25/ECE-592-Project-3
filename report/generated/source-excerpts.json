@@ -1,0 +1,44 @@
+{
+  "q1": {
+    "generator": "trackb/gen_kernels.py",
+    "generator_sha256": "73cafb7fbdffeb005f37a7bed2288c3fe56c2f7d92bb75fccc0c2976b39a7e4a",
+    "function": "tb_q1_4",
+    "note": "Actual generated instructions; comments explicitly mark omitted repeated bodies.",
+    "excerpt_sha256": "b3cef4ae87e25a88e9c20c6682f239c632fc4ffe3f3a82672095b2fa39e14d9c"
+  },
+  "q2": {
+    "generator": "trackb/gen_kernels.py",
+    "generator_sha256": "73cafb7fbdffeb005f37a7bed2288c3fe56c2f7d92bb75fccc0c2976b39a7e4a",
+    "function": "tb_q2_overlap_64",
+    "note": "Actual generated instructions; comments explicitly mark omitted repeated bodies.",
+    "excerpt_sha256": "f98794c89d596462cdc1529b1d0ea68643ac19d589b21e5099bbd87387cc80c7"
+  },
+  "q3": {
+    "generator": "trackb/gen_kernels.py",
+    "generator_sha256": "73cafb7fbdffeb005f37a7bed2288c3fe56c2f7d92bb75fccc0c2976b39a7e4a",
+    "function": "tb_q3_branch",
+    "note": "Actual generated instructions; comments explicitly mark omitted repeated bodies.",
+    "excerpt_sha256": "2579d52d6a565e4ec80d7602f347d9433d0a093d10cdd2bf8b618bfadc723672"
+  },
+  "q4": {
+    "generator": "scripts/gen_kernels.py",
+    "generator_sha256": "fdb6a86501a1f6b888cc4844f40a6ab08571d441ce05db34eac3ffe9a060a9fd",
+    "function": "rob_independent_224_b1_a0",
+    "note": "Actual generated instructions; comments explicitly mark omitted repeated bodies.",
+    "excerpt_sha256": "a6eaaa51c8b1ba88be59d1b2f2415555a554ed3c55ecfa5d7b8248a306daefd5"
+  },
+  "q5": {
+    "generator": "trackb/gen_kernels.py",
+    "generator_sha256": "73cafb7fbdffeb005f37a7bed2288c3fe56c2f7d92bb75fccc0c2976b39a7e4a",
+    "function": "tb_q5_lea8_d0_208",
+    "note": "Actual generated instructions; comments explicitly mark omitted repeated bodies.",
+    "excerpt_sha256": "b7903c471ebeac6774e3918dbdb8055d74cb75810ad4f073c8818aaa466d8302"
+  },
+  "q8": {
+    "generator": "trackb/gen_kernels.py",
+    "generator_sha256": "73cafb7fbdffeb005f37a7bed2288c3fe56c2f7d92bb75fccc0c2976b39a7e4a",
+    "function": "tb_q8_chase",
+    "note": "Actual generated instructions; comments explicitly mark omitted repeated bodies.",
+    "excerpt_sha256": "8a4031225a54b972ceeed35cb2ed07b5d4197259b135c165093553815e60838f"
+  }
+}

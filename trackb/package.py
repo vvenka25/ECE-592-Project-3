@@ -60,9 +60,9 @@ def main():
     output=a.out.resolve()
     if output.exists():p.error('Output ZIP exists; choose a fresh path')
     output.parent.mkdir(parents=True,exist_ok=True)
-    candidates=list(ROOT.glob('*.md'))+[ROOT/'Makefile',ROOT/'.gitignore']
+    candidates=list(ROOT.glob('*.md'))+[ROOT/'Makefile',ROOT/'.gitignore',ROOT/'requirements.txt']
     candidates += [ROOT/'submissions'/name for name in ('trackb-charnwood-source.tar.gz','trackb-charnwood-source.tar.gz.json','q4-preserved-source.tar.gz','q4-preserved-source.tar.gz.json')]
-    for folder in ('src','enclave','scripts','analysis','tests','results','trackb','report','preserved'):
+    for folder in ('src','enclave','scripts','analysis','tests','results','trackb','report','preserved','data'):
         candidates.extend((ROOT/folder).rglob('*'))
     with zipfile.ZipFile(output,'x',compression=zipfile.ZIP_DEFLATED) as z:
         for path in sorted(set(candidates)):

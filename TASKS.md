@@ -25,7 +25,9 @@ Implementation order: **Q3 → Q1 → Q2 → Q5 → Q8**. Q6 is dropped.
 - [x] Document CPU/SMT/NUMA placement, units, boundaries, disturbances, private core scheduling, direct native page queries and unresolved limitations.
 - [x] Write exercise-specific conclusions from actual evidence, with published resource models separated from measurements.
 - [x] Fill the Q4 Charnwood gap after the user confirmed it was still required, without changing or rerunning completed Artemisia work.
-- [x] Finish and inspect the 15-page PDF; author, selected list and 105-point total appear on its first page, with no layout warnings.
+- [x] Finish and inspect the 19-page revised PDF; author, selected list and 105-point total appear on its first page, with no layout warnings.
 - [x] Package PDF, source, raw evidence, plots/scripts, reproduction instructions and AI-use log; the clean candidate extraction passes CRC/artifact/evidence/Q4 checks and the source bundle builds and passes native validation.
 
 SMT affinity alone does not reserve a core. Artemisia's new CPU 12 runs have sibling 68 offline; completed Charnwood runs use private inherited core scheduling, which excludes unrelated userspace co-scheduling but permits kernel/interrupt contexts. Topology must be rechecked on reproduction. Total PRF conversion, exact-total ROB attribution, protected TLB-event coverage, physical EPC NUMA placement and host-wide quiescence remain scientific limitations, not fabricated results.
+
+Report revision: see [the reference-guided revision checklist](report/REVISION_CHECKLIST.md), [report rebuild instructions](report/README.md) and the prior report retained under `report/history/20261106-before-reference-revision/`. No completed measurement campaign was rerun.

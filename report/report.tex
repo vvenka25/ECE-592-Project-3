@@ -1,229 +1,638 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage{longtable}
-\usepackage{amsmath}
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.85in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx,booktabs,tabularx,longtable,amsmath,xcolor,listings,microtype}
+\usepackage[font=small,labelfont=bf]{caption}
 \usepackage[section]{placeins}
-\hypersetup{pdftitle={Homework 3 Track B: Q1 Q2 Q3 Q4 Q5 Q8 - 105 points},pdfauthor={Varunaditya Venkatesan}}
-\title{Homework 3 --- Track B\\Q1, Q2, Q3, Q4, Q5, Q8 --- 105 points}
-\author{Varunaditya Venkatesan}
-\date{November 6, 2026}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!45!black,citecolor=blue!45!black,urlcolor=blue!45!black,
+ pdftitle={ECE 592 Homework 3 Track B: Q1 Q2 Q3 Q4 Q5 Q8 - 105 points},
+ pdfauthor={Varunaditya Venkatesan}}
+\IfFileExists{report/figures/shared-timing.pdf}{\newcommand{\assetroot}{report/}}{\newcommand{\assetroot}{}}
+\newcommand{\repo}{https://github.com/vvenka25/ECE-592-Project-3}
+\newcommand{\overleafproject}{https://www.overleaf.com/project/6aeeb80e5d4ccedd231a327b}
+\newcommand{\artifact}[1]{\path{#1}}
+\newcommand{\rfigure}[4]{\begin{figure}[!htbp]\centering\includegraphics[width=#2\linewidth]{\assetroot figures/#1.pdf}\caption{#3}\label{#4}\end{figure}}
+\newcommand{\rtable}[3]{\begin{table}[!htbp]\centering\small\setlength{\tabcolsep}{4pt}\input{\assetroot generated/#1.tex}\caption{#2}\label{#3}\end{table}}
+\newcommand{\snippet}[2]{\lstinputlisting[caption={#2}]{\assetroot snippets/#1}}
+\newcommand{\evidence}[1]{\par\smallskip\begingroup\small\raggedright\noindent\textit{Evidence and reconstruction.} #1\par\endgroup}
+\lstset{basicstyle=\ttfamily\footnotesize,columns=fullflexible,keepspaces=true,
+ frame=single,rulecolor=\color{black!25},backgroundcolor=\color{black!2},
+ breaklines=true,breakatwhitespace=false,showstringspaces=false,
+ aboveskip=6pt,belowskip=6pt,captionpos=b}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt plus 1pt}
+\widowpenalty=10000\clubpenalty=10000
+\renewcommand{\arraystretch}{1.12}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{9pt plus 2pt minus 2pt}
 \begin{document}
-\maketitle
-\begin{center}\textbf{Measured comparisons; inference limits stated explicitly}\end{center}
-\noindent Selected exercises: \textbf{Q1, Q2, Q3, Q4, Q5, Q8 --- 105 points}.
 \begin{center}
-\begin{tabular}{llrl}
-Question & Task & Points & Project status\\\hline
-Q1 & Confirm pipelining & 10 & Measured comparisons\\
-Q2 & Confirm out-of-order execution & 10 & Measured comparisons\\
-Q3 & Confirm branch prediction & 10 & Measured comparisons\\
-Q4 & Reverse engineer ROB size & 30 & Completed; preserved\\
-Q5 & Integer GPR physical register capacity & 35 & Pressure bound measured\\
-Q8 & Additional cost of a TLB miss & 10 & Native cost qualified\\\hline
- & Total & 105 & Q6 dropped
+{\LARGE\bfseries Pipelines, Speculation, and Address Translation\par}
+\vspace{5pt}
+{\large Microarchitecture Experiments on Two Intel Generations\par}
+\vspace{12pt}
+{\large Varunaditya Venkatesan\par}
+Unity ID: \texttt{vvenka25}\\
+ECE 592 --- Homework 3, Track B\\
+North Carolina State University, Fall 2026\\
+November 7, 2026
+\vspace{9pt}
+
+\textbf{GitHub source and evidence:}\\
+\url{https://github.com/vvenka25/ECE-592-Project-3}\\[3pt]
+\textbf{Overleaf project:}\\
+\url{https://www.overleaf.com/project/6aeeb80e5d4ccedd231a327b}
+\end{center}
+\vspace{2pt}\hrule\vspace{6pt}
+\textbf{Selected exercises: Q1, Q2, Q3, Q4, Q5, Q8 --- 105 points.}
+\begin{center}\small
+\begin{tabular}{clrc lr}
+\toprule
+Question & Experiment & Points & Question & Experiment & Points\\
+\midrule
+Q1 & Pipelining & 10 & Q4 & ROB capacity & 30\\
+Q2 & Out-of-order execution & 10 & Q5 & Integer physical registers & 35\\
+Q3 & Branch prediction & 10 & Q8 & TLB-miss cost & 10\\
+\bottomrule
 \end{tabular}
 \end{center}
-\noindent Implementation order: Q3 $\rightarrow$ Q1 $\rightarrow$ Q2 $\rightarrow$ Q5 $\rightarrow$ Q8.
-Native measurements now cover both machines for all six selected questions; applicable hardware-enclave comparisons use Artemisia. The missing Charnwood Q4 comparison was added with unchanged preserved source, without rerunning Artemisia Q4. Q5 reports a qualified speculative destination-pressure bound, not an invented total PRF size. Q8 enclave miss-class attribution remains unqualified. Functional smoke checks are kept separate from performance evidence.
+\textbf{Abstract.}
+We examine six microarchitectural properties on Charnwood's Core i7-6700
+(Skylake) and Artemisia's Xeon Gold 5420+ (Sapphire Rapids), with paired
+hardware-debug SGX measurements on Artemisia. Fixed-work integer multiplication
+shows approximately three active core cycles of dependency latency and a
+one-cycle initiation interval on both CPUs. A blocked-older/ready-younger
+arithmetic experiment, with dependency and fence controls, supports out-of-order
+execution. Balanced shuffled branch outcomes cost substantially more than
+regular outcomes, while a branchless control remains nearly unchanged.
+Repeated ROB-spacing sweeps place effective overlap loss at N=220--224 on
+Charnwood and N=492--500 on Artemisia. Scaled-index LEA writes expose earlier
+integer-GPR destination-pressure regions, approximately N=128--144 and
+N=200--216; the evidence does not establish total physical register-file size.
+For native L1 data-TLB misses served by the STLB, cache/event-controlled
+baseline subtraction gives about nine and seven additional active core cycles,
+respectively. The enclave retains the principal dependency, branch and
+capacity trends, but its protected TLB-event coverage is unqualified. All
+results use retained raw measurements; process repetitions, timing units,
+controls and attribution limits remain explicit.
+\vspace{5pt}\hrule
 \clearpage
-\section{Machines and common protocol}
-Charnwood uses an Intel Core i7-6700 (Skylake, four cores/eight threads). Artemisia uses an Intel Xeon Gold 5420+ (Sapphire Rapids, two sockets, 56 physical cores, SMT, two NUMA nodes). Current topology and allowed CPUs must be captured with each campaign; CPU 68 was still offline during implementation validation. Each selected exercise requires native measurements on both machines and applicable same-machine enclave comparison. Record specific unavailability rather than substitute simulation.
 
-The new suite reuses the existing affinity, host LFENCE/RDTSCP/LFENCE timing, warm-up, deterministic pointer-graph, continuous-cursor, raw-output and platform/mapping audit designs. Dispatch/return and SGX ECALL costs are inside timing; setup, warm-up, snapshots, resource-usage checks and PMU control are outside. Units are host TSC ticks, with no assumed equal tick duration across hosts; use within-machine ratios or separately calibrate before time conversion. PMU brackets are slightly wider and enclave coverage is unverified. SMT reservation and frequency/interrupt limitations must accompany the collected results. See \texttt{trackb/METHODS.md} for details and \texttt{AI\_USE\_LOG.md} for assistance disclosure.
-\begin{verbatim}
-_mm_lfence(); start = __rdtscp(&aux_start); _mm_lfence();
-value = invoke(mode, parameter, iterations);
-_mm_lfence(); end = __rdtscp(&aux_end); _mm_lfence();
-\end{verbatim}
-Compiled boundaries are checked separately around native invocation and the enclave-host ECALL path. The final new-suite collector queries every page's node with \texttt{move\_pages(nodes=NULL)} before/after, requesting no migration; complete local residency, full RSS and no THP are required. Earlier incomplete \texttt{numa\_maps} inventories remain in rejected partial campaigns. Query operations and a repeated post-snapshot warm-up are outside timing. Earlier archived campaigns retain their recorded snapshot checks; preserved Q4 keeps its original protocol.
+\section{Experimental setup and common measurements}\label{sec:setup}
+\subsection{Machines and placement}
+Campaign inventories identify the two CPUs and collection-time configuration
+(Table~\ref{tab:machines}). Every selected question has native measurements
+on both course machines, as required~\cite{assignment}.
+\begin{table}[!htbp]\centering\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+ & Charnwood & Artemisia\\\midrule
+CPU & Intel Core i7-6700 & Intel Xeon Gold 5420+\\
+Microarchitecture & Skylake & Sapphire Rapids\\
+Topology & 1 socket, 4 cores, 8 logical CPUs & 2 sockets, 56 cores, 112 logical CPUs; CPU 68 offline\\
+NUMA domains & 1 & 2\\
+New-suite placement & CPU 1, node 0; sibling 5 online & CPU 12, node 0; sibling 68 offline\\
+SMT control & Private inherited core-scheduling group & No online sibling; before/after activity gate\\
+Compiler & GCC 13.3.0, \texttt{-O2} & GCC 11.5.0, \texttt{-O2}\\
+SGX access & No current/legacy SGX device path & Hardware-debug SGX with system PSW runtime\\
+\bottomrule
+\end{tabularx}
+\caption{Recorded configuration. Charnwood's controller is on CPU 0; new-suite controllers use another physical core. These are collection-time settings, so reproduction must recheck topology and affinity.}\label{tab:machines}
+\end{table}
 
-New Artemisia campaigns use CPU 12, local NUMA node 0, with sibling CPU 68 offline before and after each job. The collector rejects observed sibling activity or topology changes and audits native 4 KiB backing/local placement. Q1 is register-only. The same process binding is requested for SGX, but these host mappings do not verify physical EPC NUMA placement. This does not instrument every interrupt, AEX or external interference. An early 92-sample native/enclave smoke collection is retained as functional history. Subsequent scaled-index/eight-chain, geometry/residency and four-counter revisions passed updated native/hardware-enclave result, byte and timer checks; each measurement campaign snapshots its own build. The performance campaigns use two fresh-process repetitions and 15 raw samples/condition; repetitions are reported separately, with no primary sample removal.
+Affinity precedes allocation. Native memory experiments request node 0 and
+4 KiB backing. The final protocol requires full RSS, no transparent huge pages
+and read-only per-page NUMA queries before/after timing; it requests no page
+migration~\cite{movepages}. Earlier campaigns retain their recorded checks.
+These host audits do not verify physical EPC placement. Charnwood's core group
+excludes unrelated userspace co-scheduling, with kernel/interrupt contexts
+still possible~\cite{coresched}.
 
-Completed Charnwood campaigns use CPU 1/node 0 with a private inherited Linux core-scheduling group. The collector is on CPU 0; unrelated userspace tasks cannot share its benchmark core under that policy. Kernel/interrupt contexts and host-wide cache/memory traffic remain possible. The unchanged legacy Q4 collector/helper mask also allows CPU 1, so its recorded preemptions remain a limitation. Stopped zero-sibling-tick attempts are retained separately. Charnwood has none of the current or legacy SGX device paths checked, so no Charnwood enclave result is synthesized. Native core-cycle diagnostics are distinct from TSC ticks; Q8 adds simultaneous cycles to its three miss/cache events and withholds TSC cost when effective clock/preemption ratios do not match.
+\textbf{Preserved Q4 is a distinct configuration.} Artemisia's completed Q4
+runs used CPU 1/node 0, with sibling 57 activity recorded as uncontrolled.
+Charnwood Q4 also used CPU 1/node 0; an external private core group was applied,
+although the legacy manifest says uncontrolled. Its external-control records
+identify the actual group; the legacy helper mask also permits CPU 1. Neither
+history is rewritten as equivalent to the newer CPU-12 protocol.
 
-\section{Q3: branch prediction (10 points)}
-Use balanced alternating and shuffled outcome streams, plus constant-direction controls and an explicit branchless sensitivity kernel. Equal-length branch arms each add to an observable counter and execute an unconditional jump. Assembly inspection verifies the actual conditional branch and excludes compiler if-conversion:
-\begin{verbatim}
-movzbl (%r10,%rax), %edx
-test %edx,%edx
-jz zero
-add $1,%r8
-jmp join
-zero:
-add $1,%r9
-jmp join
-\end{verbatim}
-The Artemisia campaign uses 64 KiB byte patterns, 1,048,576 decisions/sample, two shuffle seeds, and retains 480 raw observations. Each cell lists the two process medians in TSC ticks/decision:
-\begin{center}\begin{tabular}{lrr}
-Treatment & Native & Hardware SGX\\\hline
-Conditional, alternating & 3.346 / 3.346 & 3.377 / 3.375\\
-Conditional, shuffled seed 42 & 11.363 / 11.446 & 11.354 / 11.378\\
-Conditional, shuffled seed 271828 & 11.329 / 11.406 & 11.312 / 11.337\\
-Branchless, alternating & 1.294 / 1.294 & 1.316 / 1.313\\
-Branchless, shuffled seed 42 & 1.294 / 1.294 & 1.315 / 1.314
-\end{tabular}\end{center}
-Native randomized branch misses are 0.469--0.473 per decision, versus approximately $6$--$7\times10^{-6}$ for alternating outcomes. The branchless control has essentially unchanged timing under the same pattern treatment. Together with the verified conditional branch, this supports successful prediction of the regular stream and frequent failures on the shuffled stream. It is not a calibrated per-misprediction penalty. Enclave branch counters count only about 0.0003 branches/decision, versus roughly 3 natively; they do not establish enclave kernel coverage, so only its timing contrast is interpreted. Zero ordinary faults and 27 samples with context-switch deltas were recorded and retained. Source snapshots, exact commands and raw rows are in \texttt{results/q3-artemisia/}.
-\begin{figure}[htbp]\centering
-\includegraphics[width=\textwidth]{results/q3-comparison/Q3.pdf}
-\caption{Q3 raw TSC comparisons. Each machine has its own tick duration; Charnwood's elapsed-time drift is visible and interpreted using simultaneous native core cycles.}
-\end{figure}
-Charnwood native alternating conditional work takes 6.0015 / 6.0026 active core cycles/decision, versus 17.6524 / 17.6466 shuffled (seed 42). Branchless alternating is 2.7628 / 2.7640, versus 2.7921 / 2.8002 shuffled; native shuffled branch misses are about 0.496--0.497/decision. Its raw alternating TSC medians drift from 5.5566 to 7.3413 and branchless alternating from 2.5604 to 3.9602, despite stable core-cycle costs. Thus elapsed timing alone would confound the comparison. The cycle and miss evidence supports branch prediction on both CPUs, while the enclave comparison remains timing based. All Charnwood rows are retained in \texttt{results/q3-charnwood-private/}.
+\subsection{Samples, work and statistics}
+Each treatment keeps 15 timed samples and two fresh-process repetitions; job
+and parameter orders are shuffled with recorded seeds. The randomized pointer
+cycles cover the full requested footprint and continue between samples.
+Full-ring or full-pattern warm-up and a short kernel warm-up precede timing.
+All primary observations remain, including recorded ordinary faults and
+context switches. Solid circles denote process 1, dashed squares process 2
+unless a caption specifies another control style. Shading or error bars show
+observed inclusive p10--p90, not confidence intervals. Tables show separate
+process medians as \textbf{R1 / R2}; no host, environment or repetition is pooled.
 
-\section{Q1: pipelining (10 points)}
-The same 32 explicit \texttt{imul \$3,reg,reg} instructions per iteration use one, two or four dependency chains. One chain is latency dominated; multiple chains expose reciprocal throughput. For four chains, the generator emits this group eight times (one chain instead writes R8 for all 32 operations):
-\begin{verbatim}
-imul $3,%r8,%r8
-imul $3,%r9,%r9
-imul $3,%r10,%r10
-imul $3,%r11,%r11
-\end{verbatim}
-Each sample executes 100,000 iterations. The 240 retained observations include zero-work invocation controls. Each cell lists the two process medians:
-\begin{center}\begin{tabular}{lrrr}
-Chains & Native ticks/IMUL & Native cycles/IMUL & SGX ticks/IMUL\\\hline
-1 & 2.2314 / 2.2308 & 3.0005 / 3.0005 & 2.2435 / 2.2456\\
-2 & 1.1156 / 1.1155 & 1.5003 / 1.5003 & 1.1249 / 1.1251\\
-4 & 0.7440 / 0.7435 & 1.0002 / 1.0002 & 0.7500 / 0.7502
-\end{tabular}\end{center}
-With fixed work, the native dependency latency is about three active core cycles and the initiation interval with independent work about one cycle, a ratio near three. The zero-work medians are 64 native and 11,046 SGX ticks/invocation; no overhead subtraction is applied to the table. They are negligible per IMUL at this batch length. No ordinary faults were recorded; 13 samples had context-switch deltas and remain included.
+A sample records host TSC ticks. Q1 divides by $32I$ IMULs; Q2, Q3 and Q8 divide
+by $I$ blocks, decisions and loads; Q4 and Q5 divide by $2I$ loads. TSC ticks
+are not active core cycles. We neither convert ticks using nominal MHz nor
+assume equal tick duration across machines. Native PMU core cycles are labeled
+separately. Counter brackets include slightly more host-user work than the
+TSC interval and require at least 98\% scheduled coverage for qualification.
 
-Multiple execution units are an alternative explanation for independent-work speedup. The selected IMUL form has a single port-1 resource in the separately cited LLVM Skylake/Sapphire Rapids models; this is a reference model, not a measured unit count. The latency/throughput gap together with that resource bound supports pipelined multiplication. Timing alone cannot rule out arbitrary undisclosed replicated hardware or measure whole-CPU pipeline depth. Native core-cycle diagnostics and host TSC ticks are explicitly different units; enclave PMU coverage remains unqualified. Raw data and metadata are in \texttt{results/q1-artemisia/}.
-\begin{figure}[htbp]\centering
-\includegraphics[width=\textwidth]{results/q1-comparison/Q1.pdf}
-\caption{Q1 fixed-work dependency experiment on both native machines and Artemisia SGX, with separate repetitions.}
-\end{figure}
-Charnwood repeats the same native cycle pattern: approximately 3.0006, 1.5003 and 1.0003 core cycles/IMUL for one/two/four chains. Its zero-work median is 76 ticks/invocation in both repetitions. The two CPUs therefore show the same roughly three-cycle dependency latency and one-cycle initiation interval, despite different raw TSC rates. See \texttt{results/q1-charnwood-private/}; the execution-unit replication qualification applies to both machines.
+\clearpage
+\subsection{SGX background and same-machine comparison}
+Intel SGX provides enclaves: application regions whose code and data receive
+hardware-enforced isolation from ordinary host software. SGX applications
+separate trusted enclave code from an untrusted host, using explicit enclave
+calls to cross that boundary~\cite{sgx}. Here the enclave allocates and
+initializes its private arena and executes the assembly kernel; the host
+sets affinity, creates the enclave, invokes initialization/warm-up, reads the
+timer and counters, and emits raw data. Artemisia used hardware-debug enclaves
+(\texttt{SGX\_DEBUG\_FLAG}, \texttt{DisableDebug=0}), not simulation. Debug
+mode permits inspection and is a development configuration~\cite{sgx}.
+The user previously confirmed Intel SampleEnclave with
+\texttt{SGX\_MODE=HW SGX\_DEBUG=1}; that console output was not saved.
+Retained custom-enclave semantic and timing checks establish the benchmark's
+own hardware execution separately.
 
-\section{Q2: out-of-order execution (10 points)}
-\begin{verbatim}
-mov (%r8),%r8          # older pointer load
-imul $3,%r8,%rax       # older multiply blocked on load
-xor %r11,%r9          # ready source, overlap variant
-# K younger imul $3,%r9,%r9 operations
-xor %rax,%r10         # consume older result
-lfence                # common end-of-block boundary
-\end{verbatim}
-The dependency-serialized variant uses RAX in the XOR; a third variant inserts LFENCE after the older multiply. All variants end each block with LFENCE to prevent overlap with the next block's load. The randomized cold ring occupies 256 MiB, versus 16 KiB hot; K=0 exposes the baseline and extra fence cost. Each sample has 100,000 blocks. Each cell lists the two process medians, in TSC ticks/block:
-\begin{center}\begin{tabular}{lrr}
-Treatment & Native & Hardware SGX\\\hline
-Cold independent, K=0 & 287.97 / 287.11 & 361.41 / 372.15\\
-Cold independent, K=64 & 292.72 / 295.18 & 387.02 / 369.17\\
-Cold dependency-serialized, K=64 & 432.31 / 430.24 & 542.05 / 522.43\\
-Cold fence-serialized, K=64 & 439.04 / 440.26 & 584.86 / 545.50\\
-Hot independent, K=64 & 153.91 / 153.85 & 154.93 / 154.87\\
-Hot dependency-serialized, K=64 & 158.44 / 158.58 & 159.52 / 159.50
-\end{tabular}\end{center}
-Native cold independent work adds only about 5--8 ticks to K=0, while forcing that younger chain to depend on the older blocked multiply adds about 135--140 ticks relative to independent K=64. The independent hot block already takes about 154 ticks, so the cold experiment has substantial work available to hide behind the older load. The extra fence changes cold K=0 by about 9--11 ticks; that overhead is much smaller than the K=64 contrast. The direction also holds inside the enclave, with greater cold timing variation. Given the verified program order, dependency change and common block boundary, this supports younger ready arithmetic executing ahead of the older blocked arithmetic, beyond a claim of independent-stream throughput alone. It is not exact instruction-by-instruction tracing or an additive latency identity.
+Comparing native and SGX on the \emph{same} Artemisia CPU asks whether the same
+instruction stream exposes the same behavior, and whether its timing or
+transition changes. Within each paired campaign, the kernel bytes, input
+pattern or ring geometry, footprint, seed, filler/chain choices, iteration
+count, sample count and CPU/node request match. Both environments use host
+LFENCE/RDTSCP/LFENCE boundaries around one invocation. The SGX timed interval
+includes ECALL entry/exit and marshalling; enclave creation, allocation and
+warm-up are outside. Native arenas use anonymous mmap; protected arenas use
+enclave allocation, with Q8 explicitly page-aligned in both. Differences in
+runtime transitions, protected memory placement, cache/translation state,
+frequency or interruptions are possible explanations, not separately measured
+causes of a timing difference.
 
-The accepted campaign \texttt{results/q2-artemisia-retry/} retains 540 observations, zero ordinary faults and 71 samples with context-switch deltas. The preceding partial campaign is preserved separately: its 31st job failed the declared NUMA placement gate, so it is not completed evidence. A pre-implementation pilot without the common end fence is also retained as a rejected assay, not positive OOO evidence.
-\begin{figure}[htbp]\centering
-\includegraphics[width=\textwidth]{results/q2-comparison/Q2.pdf}
-\caption{Q2 matched dependency/fence controls, separated by machine, environment and hot/cold footprint.}
-\end{figure}
-Charnwood cold K=64 independent medians are 359.96 / 360.08 ticks/block, versus 599.72 / 599.63 dependency-serialized and 598.99 / 602.43 fence-serialized. Hot independent K=64 is 184.76 / 184.82. This independently supports bypass of the older blocked arithmetic. Its cold K=0 baseline is 402.88 / 403.50, exceeding independent K=64; frequency/memory-state variation prevents exact additive baseline subtraction. The conclusion rests on matched K=64 dependency/fence changes and actual assembly order, not an assumed sum identity. Raw evidence is in \texttt{results/q2-charnwood-private/}.
-
-\section{Q4: preserved completed ROB work (30 points)}
-The completed Artemisia evidence is preserved without modification. Two fine campaigns of 1,980 samples each show an effective overlap-loss transition across sampled N=492--500 NOPs per load-to-load gap, in native and hardware-debug SGX builds. It is an operational instruction-window finding; exact total ROB-entry attribution remains qualified in the original analysis. An isolated repeated-enclave N=548 peak is retained and prevents a largest-jump-only estimator from being used blindly.
-\begin{center}
-\begin{tabular}{rrrrr}
-N & Native first & Native repeat & SGX first & SGX repeat\\\hline
-492 & 179.55 & 180.02 & 214.67 & 223.14\\
-496 & 215.28 & 215.96 & 274.12 & 284.81\\
-500 & 288.09 & 289.73 & 365.20 & 368.36
+\begin{table}[!htbp]\centering\small
+\begin{tabular}{lrr}
+\toprule
+Enclave setting & Q1/Q2/Q3/Q5/Q8 suite & Preserved Q4\\\midrule
+\texttt{HeapMaxSize} & \texttt{0x18000000} (384 MiB) & \texttt{0x30000000} (768 MiB)\\
+\texttt{StackMaxSize} & \texttt{0x40000} (256 KiB) & \texttt{0x40000} (256 KiB)\\
+\texttt{TCSNum / TCSPolicy} & 1 / 1 & 1 / 1\\
+\texttt{ProdID / ISVSVN / DisableDebug} & 0 / 0 / 0 & 0 / 0 / 0\\
+\texttt{MiscSelect / MiscMask} & 0 / \texttt{0xFFFFFFFF} & 0 / \texttt{0xFFFFFFFF}\\
+\bottomrule
 \end{tabular}
-\end{center}
-Values are independent-load medians in host TSC ticks/load. No raw observations are removed or overhead corrected. The loop has 2N NOPs, two loads and decrement/branch per iteration; neither N nor the entire loop instruction count alone establishes total ROB entries. See the preserved method, controls, raw data and limits in \texttt{ROB\_BENCHMARK.md} and \texttt{ROB\_RESULTS\_ARTEMISIA.md}.
-\begin{figure}[htbp]
-\centering\includegraphics[width=\textwidth]{results/v2-fine-repeat/review/comparison/curves.pdf}
-\caption{Preserved Q4 Artemisia fine campaigns. Separate medians and observed p10--p90; panel scales differ. No second-machine curve is synthesized.}
-\end{figure}
-The user confirmed Charnwood Q4 had not yet been measured. A separate host-local build of the unchanged protected implementation passed its original 3,084-kernel checks and an independent native timer audit. Its build ID remains \texttt{bcd9d621feed36f6}. CPU 1/node 0, a 256 MiB footprint, 100,000 iterations/sample and 15 raw samples/condition match the preserved protocol. A 1,950-observation coarse run selected fine N=192..240; two order-shuffled fine processes retain 390 observations each:
-\begin{center}\begin{tabular}{rrr}
-N & Independent first / repeat & Serialized first / repeat\\\hline
-216 & 282.844 / 284.436 & 389.352 / 389.210\\
-220 & 323.444 / 325.026 & 395.995 / 397.681\\
-224 & 398.810 / 398.941 & 409.600 / 398.887
-\end{tabular}\end{center}
-The largest fine step is 220$\rightarrow$224 in both processes, also under minimum and unflagged-median diagnostics; the N=224 ratios are approximately 0.974 and 1.000. This is an effective overlap-loss window, not an asserted total ROB count. Coarse has two faulted observations and 540 with context-switch deltas; fine has zero ordinary faults and 67/75 context-switch observations, all retained. See \texttt{Q4\_CHARNWOOD\_RESULTS.md}. Artemisia's data, figures, analysis and original instructions remain unchanged.
-\begin{figure}[htbp]\centering
-\includegraphics[width=\textwidth]{results/q4-comparison/curves.pdf}
-\caption{Q4 within-host median ratios compare overlap without assuming equal TSC duration across machines. Artemisia uses its actual preserved full-range frontend baseline; Charnwood uses its new coarse sweep.}
-\end{figure}
+\caption{Configuration taken from the benchmark XML and campaign source snapshots. SDK path: \texttt{/opt/intel/sgxsdk}; retained runtime/PSW packages report version 2.23.100.2.}\label{tab:sgx}
+\end{table}
+\rfigure{shared-timing}{.94}{The common host timer encloses the native invocation or the ECALL. Protected allocation and physical EPC placement differ from native mmap; equal kernel bytes do not make those memory environments identical.}{fig:timer}
+\lstinputlisting{\assetroot snippets/timer.c}
 
-\section{Q5: integer physical register allocation (35 points)}
-Class: \textbf{64-bit integer GPR}. Replace NOP filler in the two-ring resource-pressure framework with scaled-index \texttt{lea (reg,reg,2),reg}, computing 3*x modulo $2^{64}$. Compare one/four/eight-accumulator variants, a four-byte NOP window control matching instruction count and encoded length, and a serialized-load control. All controls initialize the same eight accumulators and preserve the same callee-saved registers outside the hot loop. The filler has no FLAGS destination, is not a plain move or zero idiom, and avoids pure constant-offset tracking. The oldest delayed load prevents retirement while new destinations accumulate. Execution/scheduler limits remain alternatives if controls disagree.
+\clearpage
+\section{Q1: confirm pipelining (10 points)}\label{sec:q1}
+\subsection{Method and observable signal}
+A pipelined execution resource can start a new operation before the previous
+operation produces its dependent result. We therefore measure dependency
+latency and initiation interval with fixed instruction work. Each loop executes
+32 explicit \texttt{imul \$3,reg,reg} instructions, distributed over one, two
+or four independent 64-bit GPR chains. Odd starting values and modulo-$2^{64}$
+arithmetic give checked, observable results; the compiler cannot replace the
+assembly IMULs with LEAs. With one chain, every multiply waits for its own prior
+result. Additional chains make ready multiplies available without changing
+the total multiply count.
 
-The first complete 7,920-observation Q5 campaign used constant-offset \texttt{lea 1(reg),reg}. Its one/four-chain curves track NOPs; at N=448, native repetition 2 takes about 468.64 core cycles/iteration despite 896 architectural updates, violating the ordinary one-cycle-chain assumption. The checksum confirms the updates, but their allocation mechanism is unresolved. This campaign is retained as a diagnostic and is not an isolated PRF estimate. Scaled-index results require a separate build and collection.
-\begin{verbatim}
-loop:
-    mov (%rdi),%rdi
-    # N actual LEAs: lea (%r8,%r8,2),%r8; rotate registers
-    mov (%rsi),%rsi
-    # N further LEAs, or N matched four-byte NOPs per gap
-    dec %rdx
-    jnz loop
-\end{verbatim}
+Each sample contains 100,000 loops (3.2 million IMULs). Register initialization,
+checksum generation and invocation are included in the call, so zero-work
+controls measure their fixed contribution. We expect per-IMUL time to fall
+until execution throughput limits further improvement. That expectation alone
+does not distinguish pipelining from replicated execution units.
+\snippet{q1.S}{Actual four-chain loop excerpt from \texttt{tb\_q1\_4}. The shown group occurs eight times per loop; the comment marks omitted repetition.}
+\rfigure{q1-method}{.94}{Q1 procedure. The small measured plot uses Artemisia native process 1. The arrows denote dependencies, not an instruction-by-instruction hardware trace.}{fig:q1method}
 
-The accepted coarse/fine campaigns retain 9,900 and 3,300 observations, respectively, with 10,000 iterations/sample and complete direct native page-node checks. Their broad early transition motivated fine N=192..232 in steps of four. Native fine medians in ticks/load (two process medians per cell) are:
-\begin{center}\begin{tabular}{rrrrr}
-N & Four chains & Eight chains & NOP & Serialized LEA\\\hline
-200 & 168.5 / 171.0 & 164.4 / 163.5 & 142.7 / 143.0 & 276.4 / 276.8\\
-204 & 183.2 / 185.9 & 167.5 / 168.2 & 142.7 / 142.7 & 277.4 / 276.8\\
-208 & 254.5 / 261.8 & 184.2 / 186.0 & 142.9 / 142.2 & 286.0 / 283.7\\
-212 & 273.4 / 276.3 & 278.6 / 272.7 & 142.0 / 142.5 & 286.8 / 287.4\\
-216 & 290.3 / 290.6 & 292.2 / 290.0 & 143.3 / 142.4 & 292.6 / 289.5
-\end{tabular}\end{center}
-Both multi-chain variants lose overlap across approximately N=200--216 and converge near the serialized control, while NOPs remain low and transition only much later in the coarse N=496--512 samples. This separates integer-destination pressure from the NOP instruction-window limit. The onset differs with chain count; one-chain arithmetic is execution-limited earlier, so dependency/scheduler effects remain material. The enclave shows the same broad early transition with more noise: four-chain N=200 is 203.2 / 203.0 ticks/load versus 359.0 / 362.7 at N=216; eight-chain N=200 is 198.0 / 209.8 versus 343.7 / 332.6 at N=212.
+\clearpage
+\subsection{Native results, paired enclave result and inference}
+\rfigure{q1-results}{.98}{Q1 fixed-work results. Left: native active core cycles per IMUL on both machines. Right: Artemisia host TSC ticks per IMUL in native and hardware SGX. Process repetitions and observed p10--p90 remain separate.}{fig:q1results}
+\rtable{q1_native}{Native Q1 process medians in active core cycles/IMUL (R1 / R2).}{tab:q1native}
+\rtable{q1_pair}{Paired Artemisia Q1 process medians in TSC ticks/IMUL (R1 / R2).}{tab:q1pair}
 
-The defensible measurement is an \textbf{effective integer-destination pressure window of about 200--216 writes per gap}. Conditional on allocation being the bottleneck, it brackets an operational speculative-allocation budget. Precise PRF-versus-scheduler attribution and the occupancy correction needed for total PRF size remain unresolved. A loop executes 2N LEAs; neither 2N nor N+16 is asserted as total PRF capacity. Committed/live mappings, other in-flight destinations, reclamation and reserved capacity need justified accounting. The coarse campaign retains 22 observations with ordinary faults and 288 with context-switch deltas; fine retains zero faults and 77 context-switch observations. Raw evidence is in \texttt{results/q5-scaled-residency-artemisia/} and \texttt{results/q5-fine-artemisia/}.
-\begin{figure}[htbp]\centering
-\includegraphics[width=\textwidth]{results/q5-comparison/Q5.pdf}
-\caption{Q5 fine intervals selected from each machine's own coarse data. Separate repetitions compare one, four and eight LEA chains with NOP and serialized-load controls.}
-\end{figure}
-Charnwood's own coarse run selected N=120..160. Four-chain medians rise from 261.90 / 262.83 ticks/load at N=128, to 323.43 / 331.84 at N=136, then 437.49 / 433.96 at N=144. Eight-chain values are 261.03 / 262.23, 320.92 / 335.33 and 434.21 / 432.58, respectively. NOPs remain near 272--292 in this interval and transition later around coarse N=208--224. The effective destination-pressure region is roughly N=128--144, smaller than Artemisia's 200--216 region. Charnwood's post-transition timing can exceed its serialized control, reinforcing that allocation, dependency and scheduler/throughput effects are coupled. The precise PRF-versus-scheduler attribution and total-size conversion remain unproved; neither a published capacity nor a guessed architectural-register correction is substituted.
+Figure~\ref{fig:q1results} and Table~\ref{tab:q1native} show approximately
+3.00, 1.50 and 1.00 active core
+cycles/IMUL for one, two and four chains, respectively. The one-chain
+latency-dominated cost is about three times the sufficiently independent
+initiation interval. Zero-work medians are 76 ticks/invocation on Charnwood,
+64 natively on Artemisia and 11,046 in its enclave (process 1); no overhead
+subtraction is applied. That fixed cost is small per operation in a
+3.2-million-IMUL batch.
 
-\section{Q8: additional TLB-miss cost (10 points)}
-Target L1 data-TLB misses serviced by the STLB. Compare a compact dependent ring with a scattered one having the same number of cache lines and randomized order. Scattered node i is at \texttt{i*4096+(i\%64)*64}; equal L1-set distribution and 8/16/24 KiB data footprints help retain hot data while changing translation pressure. The baseline is compact translation-resident access.
-\begin{verbatim}
-loop:
-    mov (%r8),%r8
-    dec %rsi
-    jnz loop
-\end{verbatim}
-Both native and enclave Q8 arenas are page aligned. Hardware semantic tests check actual arena bases and seed/cursor-derived pointer positions in both layouts, rather than assuming enclave malloc has native page alignment.
+\textbf{Alternative explanation.} Multiple multiplier units could also speed
+independent work. As a separately labeled reference model, LLVM assigns the
+selected 64-bit immediate/register IMUL to a single eligible port-1 resource
+on Skylake and Sapphire Rapids~\cite{llvm-skl,llvm-spr}. Combined with that
+resource bound, the measured latency/throughput gap supports pipelined
+multiplication. We have not experimentally counted the units or measured
+whole-processor pipeline depth; the model is supporting evidence rather than
+a measured specification.
 
-Qualified native counters must support additional STLB hits with low completed page walks and low L1D misses, plus at least 98\% group scheduling. A fourth simultaneous counter measures active core cycles. The primary estimate is
+Artemisia SGX preserves the chain-count trend. Its higher ticks coexist with
+larger included invocation costs; neither protected arithmetic latency nor a
+change in multiplier design is isolated, since enclave PMU coverage is unqualified.
+\evidence{\artifact{results/q1-charnwood-private/} and
+\artifact{results/q1-artemisia/}: 120 and 240 raw observations, including
+zero-work controls. Source: \artifact{trackb/gen_kernels.py}; reconstruction:
+\artifact{report/make_report_artifacts.py}.}
+
+\clearpage
+\section{Q2: confirm out-of-order execution (10 points)}\label{sec:q2}
+\subsection{Method and observable signal}
+We place an \emph{older unready arithmetic instruction} before younger ready
+work. A pointer load feeds an older IMUL; a later chain of K IMULs uses R9 and
+a ready XOR source. Program-order issue would have to wait at the older
+unready multiply. Out-of-order issue can execute the younger independent
+chain while the load and older multiply are pending.
+
+The dependency control changes the XOR source from ready R11 to the older
+result in RAX. A third variant inserts LFENCE before the younger work.
+\emph{Every} variant also has a common LFENCE at the block end, so younger
+arithmetic cannot hide behind the next iteration's load. This execution
+boundary uses Intel's LFENCE ordering semantics~\cite{intel-isa}. The same
+random pointer traversal runs with 16 KiB hot and 256 MiB cold footprints.
+K=0 exposes baseline/fence cost; K=64 supplies substantial younger work.
+Each sample measures 100,000 blocks.
+\snippet{q2.S}{Actual overlap kernel \texttt{tb\_q2\_overlap\_64}. The dependent variant reads RAX in the XOR; the fenced variant inserts LFENCE after the older IMUL.}
+\rfigure{q2-method}{.94}{Q2 tests bypass of an older blocked operation, beyond independent-stream throughput. The measured response is Artemisia native process 1 at cold K=64.}{fig:q2method}
+
+\clearpage
+\subsection{Native results, paired enclave result and inference}
+\rfigure{q2-results}{.98}{Q2 cold-data comparisons. Dependence/fence variants are named in the legend; control styles differ from the general process-style convention. Only measured K=0 and K=64 conditions are joined; no intermediate measurements are implied.}{fig:q2results}
+\rtable{q2}{Q2 medians in TSC ticks/block, R1 / R2. Hot is 16 KiB; cold is 256 MiB.}{tab:q2}
+
+In Figure~\ref{fig:q2results} and Table~\ref{tab:q2}, cold K=64 independent
+younger work takes about 360 ticks/block on
+Charnwood, versus approximately 600 with an explicit dependency or preceding
+fence. Artemisia native takes about 293--295 ticks independently, versus
+430--432 dependent and 439--440 fenced. The matched code order, dependency
+change and common block boundary support younger ready arithmetic executing
+ahead of the older load-dependent multiply. A speedup from independent
+operations alone would not establish this ordering property.
+
+Hot independent K=64 is substantially shorter than cold K=64 on both hosts;
+the older cold load provides an appreciable waiting interval. Artemisia's
+cold K=0 is close to independent K=64, consistent with hidden arithmetic.
+Charnwood's cold K=0 instead exceeds its independent K=64 time. Memory/frequency
+state and fence behavior therefore preclude an exact additive latency
+identity. The conclusion rests on matched K=64 dependencies and the actual
+assembly, not subtraction of an assumed load-plus-compute sum.
+
+Artemisia SGX shows the same ordering of the K=64 controls, with larger cold
+times and more variation. This supports the same qualitative behavior; it
+does not attribute the extra time to one SGX mechanism. An earlier pilot
+without the common block-end fence is retained as a rejected cross-iteration
+assay, and the partial first Artemisia collection failed its placement gate.
+Neither is pooled with the accepted campaign.
+\evidence{\artifact{results/q2-charnwood-private/} (270 rows) and
+\artifact{results/q2-artemisia-retry/} (540 rows). Source and reconstruction
+are \artifact{trackb/gen_kernels.py} and \artifact{report/make_report_artifacts.py}.}
+
+\clearpage
+\section{Q3: confirm branch prediction (10 points)}\label{sec:q3}
+\subsection{Method and observable signal}
+The conditional kernel reads one byte per decision from the same sequential
+64 KiB array. The byte selects one of two equal-length assembly arms; each
+adds to an observable outcome count and executes one unconditional jump.
+The treatments are constant zero, constant one, alternating, and shuffled
+balanced 50/50 outcomes. Seeds 42 and 271828 provide separate shuffled
+patterns. Array addresses, footprint and iteration count stay fixed.
+
+A branchless kernel reads the same patterns and computes the same counts with
+arithmetic. Its instruction stream is different, so it is a sensitivity
+control for outcome-dependent input effects rather than an identical-work
+baseline. The branch kernel is explicit assembly, and linked-code checks
+verify its conditional jump, arm lengths and absence of if-conversion.
+Each timed sample executes 1,048,576 decisions after full-pattern warm-up.
+A prediction-sensitive contrast should increase shuffled timing and native
+branch misses while leaving the branchless contrast small.
+\snippet{q3.S}{Actual conditional hot-loop excerpt from \texttt{tb\_q3\_branch}; both outcome arms remain in the linked native and enclave instruction stream.}
+\rfigure{q3-method}{.94}{Q3's pattern and control. The shown shuffled prefix is generated with the recorded seed and 64 KiB shuffle procedure. The small response plot uses Artemisia native process 1; BL denotes the branchless kernel.}{fig:q3method}
+
+\clearpage
+\subsection{Native results, paired enclave result and inference}
+\rfigure{q3-results}{.98}{Q3 native core-cycle contrasts and Artemisia paired elapsed timings. The native comparison uses core cycles because Charnwood TSC costs drift between processes. All raw timing observations remain retained.}{fig:q3results}
+\rtable{q3_native}{Native Q3 medians in active core cycles/decision, R1 / R2. The random seed is part of each treatment label.}{tab:q3native}
+\rtable{q3_pair}{Paired Artemisia Q3 medians in TSC ticks/decision, R1 / R2.}{tab:q3pair}
+
+Figure~\ref{fig:q3results} and Table~\ref{tab:q3native} show both native CPUs
+predicting the regular stream successfully and incurring much
+higher cost for shuffled outcomes. Native shuffled misses are approximately
+0.496--0.497 per decision on Charnwood and 0.469--0.473 on Artemisia, compared
+with only a few parts per million for alternating outcomes. The branchless
+pattern contrast remains small. Combined with the retained conditional jump,
+these observations support branch prediction; they do not measure a
+calibrated per-misprediction penalty or identify a predictor architecture.
+
+Charnwood alternating conditional TSC medians drift from 5.5566 to 7.3413,
+and branchless alternating from 2.5604 to 3.9602, despite stable core-cycle
+costs. Elapsed timing alone would confound the comparison. SGX retains the
+regular/shuffled timing contrast, but counts only about 0.0003 branches/decision
+versus roughly 3 natively: protected miss-rate coverage is insufficient.
+\evidence{\artifact{results/q3-charnwood-private/} (240 rows) and
+\artifact{results/q3-artemisia/} (480 rows). Generator and raw input hashes
+are in \artifact{report/generated/artifact-audit.json}.}
+
+\clearpage
+\section{Q4: ROB capacity through overlap loss (30 points)}\label{sec:q4}
+\subsection{Preserved method and observable signal}
+The completed Q4 implementation, observations, original plots and analyses
+are preserved. Each loop loads from two disjoint randomized pointer rings,
+with N single-byte NOPs between load A and load B and another N before the
+next load A. When the two dependency chains overlap, independent traversal is
+cheaper than a serialized traversal of the same complete line set. A long
+older miss prevents retirement; increasing filler spacing eventually prevents
+useful overlap across the finite instruction window.
+
+The dependent control follows one cycle through all lines. Footprint is
+256 MiB, stride 64 bytes, seed 42, one-byte NOPs and loop alignment 0.
+Each sample has 100,000 loops and two loads/loop. Charnwood's coarse sweep
+selected N=192..240 in steps of four; Artemisia's preserved fine range is
+448..576. Each fine run has a fresh order-shuffled repeat. The 2N fillers,
+loads and loop control must not be conflated with an established total ROB
+entry count.
+\snippet{q4.S}{Actual unchanged \texttt{rob\_independent\_224\_b1\_a0} loop, with repeated NOP text explicitly omitted. Both native and enclave link the same kernel object.}
+\rfigure{q4-method}{.94}{Q4's two-load spacing assay and serialized control. The small ratio plot is preserved Artemisia native process 1, reconstructed from raw observations without changing their original analysis.}{fig:q4method}
+
+\clearpage
+\subsection{Two-machine result and paired native/enclave result}
+\rfigure{q4-results}{.98}{Q4 fine observations. Charnwood native shows independent and dependent traversals; Artemisia shows independent native/SGX traversals over a labeled zoom of the preserved range. Orange bands locate the reported operational transitions. The N=548 SGX-repeat peak is retained.}{fig:q4results}
+\rtable{q4}{Independent-load medians in TSC ticks/load, R1 / R2. Different N columns reflect each host's own fine bracket, not matched elapsed durations across CPUs.}{tab:q4}
+
+In Figure~\ref{fig:q4results}, Charnwood's largest fine increase is N=220$\rightarrow$224 in both processes,
+also under minimum and unflagged-median diagnostics. At N=224,
+independent/dependent median ratios are about 0.974 and 1.000. Artemisia's
+preserved transition spans N=492--500, with native and hardware-SGX overlap
+loss in the same region. These are effective instruction-window bounds for
+the actual workload. They demonstrate a larger operational window on
+Artemisia, but exact physical ROB-entry attribution remains unproved.
+
+The enclave's higher absolute ticks coexist with a similar principal
+transition; the evidence supports a shared qualitative window rather than
+a calibrated SGX cost per ROB entry. The isolated N=548 repeat peak would
+mislead a global largest-jump-only estimator. Both processes and all primary
+samples remain visible, so the transition is not sharpened by trimming that
+peak. Uncontrolled SMT on preserved Artemisia Q4 and Charnwood's legacy helper
+placement qualify the comparison.
+
+No Artemisia Q4 rerun was needed. The user-confirmed missing Charnwood
+comparison was collected from unchanged source/build ID
+\texttt{bcd9d621feed36f6}. Its original 3,084-kernel checks and independent
+compiled native timer inspection passed. Charnwood retains 1,950 coarse rows
+and 390/390 fine rows; the Artemisia fine campaigns retain 1,980 rows each.
+\evidence{\artifact{results/q4-coarse-charnwood/},
+\artifact{results/q4-fine-charnwood/}, \artifact{results/q4-fine-repeat-charnwood/},
+\artifact{results/v2-fine/} and \artifact{results/v2-fine-repeat/}.
+The preserved \artifact{ROB_BENCHMARK.md} and
+\artifact{ROB_RESULTS_ARTEMISIA.md} remain unchanged; new figure reconstruction
+is separate under \artifact{report/}.}
+
+\clearpage
+\section{Q5: integer physical-register allocation pressure (35 points)}\label{sec:q5}
+\subsection{Register class, method and observable signal}
+The tested class is \textbf{64-bit integer general-purpose registers (GPRs)}.
+We extend the two-ring layout by replacing NOP filler with
+\texttt{lea (reg,reg,2),reg}, which computes $3r$ modulo $2^{64}$ without a
+FLAGS destination. The filler avoids plain moves, zero idioms and pure
+constant-offset updates. Rotating one, four or eight accumulators changes
+dependency depth at the same destination-write count. All variants initialize
+the same eight GPR accumulators and preserve the same callee-saved registers.
+
+A four-byte NOP control matches both filler count and encoded length; a
+serialized-load LEA control traverses the full same line set. While an older
+load prevents retirement, speculative destination writes create pressure on
+allocation and execution resources. An early multi-chain transition relative
+to the NOP window is evidence for integer-destination pressure; dependence and
+scheduler/throughput constraints remain competing limits. Each sample has
+10,000 loops. Coarse N=0..512, step 16, selected fine N=120..160 on Charnwood
+and 192..232 on Artemisia, step four.
+\snippet{q5.S}{Actual eight-chain scaled-index LEA kernel excerpt; repeated filler is marked as omitted. The eight accumulators are R8--R11, RBX, R12, R14 and R15.}
+\rfigure{q5-method}{.94}{Q5's destination-pressure treatment. The small measured plot is Artemisia native process 1. The NOP control helps distinguish an earlier destination-sensitive limit from the later instruction-window limit.}{fig:q5method}
+
+\clearpage
+\subsection{Native bounds, enclave comparison and conversion limit}
+\rfigure{q5-results}{.99}{Q5 fine ranges chosen independently from each host's coarse observations. Native and SGX panels retain four/eight-chain, NOP and serialized-load controls. Process medians and observed p10--p90 remain separate; panel scales differ.}{fig:q5results}
+\rtable{q5_native}{Q5 native process medians in TSC ticks/load. N is writes or NOPs per gap; R1 / R2 are separate processes.}{tab:q5native}
+\rtable{q5_pair}{Paired Artemisia Q5 process medians in TSC ticks/load, R1 / R2.}{tab:q5pair}
+
+Figure~\ref{fig:q5results} shows Charnwood's four/eight-chain curves rising across roughly N=128--144 while NOPs
+remain low; Artemisia's corresponding region is approximately N=200--216.
+The NOP transitions occur much later, around coarse N=208--224 and 496--512,
+respectively. The direction survives the four/eight-chain change, supporting
+an integer-destination-sensitive operational bound. The onset shifts with
+chain count, and Charnwood's later LEA time can exceed its serialized control:
+allocation, dependency and scheduling/throughput effects are coupled.
+
+Artemisia SGX has the same broad earlier region with greater variation,
+including the retained eight-chain process-1 N=216 value of about 403
+ ticks/load. Shared bytes do not ensure identical initial physical-register
+occupancy in the two environments.
+
+\clearpage
+\subsection{Control separation and scope of the register estimate}
+\rfigure{q5-coarse-controls}{.98}{The complete Q5 native coarse sweeps retain the one-chain execution diagnostic, multi-chain treatments, serialized loads and NOP control. Green bands mark the multi-chain pressure region; gray bands mark the later NOP-window region. These are actual separate process medians, not schematic capacity curves.}{fig:q5coarse}
+
+Figure~\ref{fig:q5coarse} shows why the fine interval was chosen from Q5's own
+coarse data instead of reusing the Q4 NOP bracket. Integer-destination work
+changes behavior substantially before NOPs exhaust the instruction window.
+The one-chain curve rises early because a long arithmetic dependency itself
+costs time; it is not a capacity estimate. Persistence across four and eight
+chains is stronger evidence, but execution resources and the scheduler can
+still limit how much of the older miss is hidden. The full-range controls
+therefore support the destination-sensitive bound without uniquely assigning
+it to a physical structure.
+
+The first constant-offset \texttt{lea 1(reg),reg} campaign is retained
+separately: its checked results and unexpectedly short one-chain cycles
+invalidated the assumed ordinary allocation/execution model. Its mechanism
+was not established, and those measurements are not pooled with the revised
+scaled-index treatment.
+
+\textbf{What quantity is established.} Conditional on allocation being the
+bottleneck, N=128--144 and N=200--216 bracket an effective speculative
+integer-destination budget. Precise PRF-versus-scheduler attribution and the
+conversion to \emph{total} physical PRF size are unresolved. A conversion
+would require measured or justified committed/live mappings, other in-flight
+destinations, reclamation timing and reserved capacity. Neither $2N$ nor
+$N+16$ supplies that accounting. The experiment is complete; its supported
+answer is a conditional bound rather than an invented total size.
+\evidence{\artifact{results/q5-charnwood-private/},
+\artifact{results/q5-fine-charnwood-private/},
+\artifact{results/q5-scaled-residency-artemisia/} and
+\artifact{results/q5-fine-artemisia/}. The coarse/fine rows are 4,950/1,650
+on Charnwood and 9,900/3,300 on Artemisia.}
+
+\clearpage
+\section{Q8: additional cost of an STLB-served TLB miss (10 points)}\label{sec:q8}
+\subsection{Miss class, baseline and controls}
+The target is an \textbf{L1 data-TLB miss served by the STLB}, rather than a
+page walk or an unspecified translation/cache mixture. Both layouts use the
+same node count, cache-line count, seed and random dependent traversal order.
+Compact nodes occupy consecutive 64-byte lines. Scattered node $i$ occupies
+\texttt{base + i*4096 + (i\%64)*64}: one line per 4 KiB page, spread over all
+64 L1 set offsets. Both native and enclave arenas are page-aligned; hardware
+checks verify actual pointer geometry and cursors.
+
+The 128/256/384 nodes use only 8/16/24 KiB of data in either layout. Full-ring
+warming helps keep data hot while scattered translations exceed the L1-TLB
+working set. The compact layout is the translation-resident baseline.
+Dependency prevents overlap of successive loads. Four simultaneous native
+counters record STLB services, completed 4 KiB walks, L1D misses and active
+core cycles, using Intel's model-specific event definitions~\cite{perf-skl,perf-spr}.
+\snippet{q8.S}{Actual dependent loop \texttt{tb\_q8\_chase}; address construction and warm-up are outside this timed loop.}
+\snippet{q8-address.c}{Actual layout arithmetic from \texttt{trackb/engine.c}. Compact and scattered layouts share the same randomized node order.}
+\rfigure{q8-method}{.94}{Q8 changes the translation working set while matching touched data lines. Address boxes are schematic; the small cost plot uses the actual class-qualified native process-1 estimates.}{fig:q8method}
+
+\clearpage
+\subsection{Qualified native cost and paired enclave observations}
+\rfigure{q8-results}{.98}{Left: native cost from separate process medians; no confidence interval is assigned to this derived ratio. Right: Artemisia compact (dotted) and scattered timing. Protected miss attribution remains unqualified.}{fig:q8results}
+\rtable{q8_cost}{Additional active core cycles per added STLB service, R1 / R2.}{tab:q8cost}
+\rtable{q8_pair}{Artemisia raw layout medians in TSC ticks/load, R1 / R2.}{tab:q8pair}
+
+For Figure~\ref{fig:q8results} and Table~\ref{tab:q8cost}, each matched
+process uses the estimate
 \[
-\frac{\text{scattered cycles/load}-\text{compact cycles/load}}
-{\text{scattered STLB services/load}-\text{compact STLB services/load}}.
+ C_{\rm extra}=\frac{\operatorname{median}(c_{\rm scattered}/I)-
+ \operatorname{median}(c_{\rm compact}/I)}
+ {\operatorname{median}(s_{\rm scattered}/I)-
+ \operatorname{median}(s_{\rm compact}/I)},
 \]
-This normalizes by observed additional services rather than assuming every load misses. Each sample has 100,000 dependent loads; each cell lists the two process medians' derived costs:
-\begin{center}\begin{tabular}{rrr}
-Nodes/cache lines & Charnwood extra core cycles & Artemisia extra core cycles\\\hline
-128 & 9.0014 / 9.0029 & 7.0016 / 7.0015\\
-256 & 9.0052 / 9.0014 & 7.0007 / 7.0023\\
-384 & 9.0101 / 9.0043 & 7.0024 / 7.0020
-\end{tabular}\end{center}
-Both native CPUs pass the miss/cache criteria: additional STLB services exceed 0.5/load, compact service rates are below 0.05/load, recorded 4 KiB walks are zero, and maximum L1D misses/load are 0.00273 on Charnwood and 0.0008 on Artemisia. The supported estimate is therefore \textbf{about 9 additional active core cycles on Charnwood and 7 on Artemisia per L1 data-TLB miss served by the STLB}. It is neither total load latency nor page-walk cost. These cycle counts do not establish nanoseconds across different clock rates; wider-bracket host instructions and event semantics limit precision.
+where $c$ counts active core cycles and $s$ counts STLB services. Require
+native coverage $\geq98\%$, added services $>0.5$/load, compact services
+$<0.05$/load, and both walks and L1D misses $<0.01$/load in either layout.
+Both hosts pass: recorded 4 KiB walks are zero, and maximum L1D misses/load
+are 0.00273 on Charnwood and 0.0008 on Artemisia. The supported extra costs
+are therefore about \textbf{9 and 7 active core cycles}, above the compact
+baseline. Page-walk costs are not measured; counter semantics limit precision.
 
-The initial three-event campaign exposed a shifted Charnwood compact baseline (256 nodes, repetition 2: about 6.85 versus 3.70 ticks/load) despite comparable miss/cache rates. It is retained as a diagnostic. Final TSC cost is emitted only when effective cycles/TSC-tick medians match within 2\% and each condition's ratio p90/p10 is at most 1.02. This practical central-80\% clock/preemption check is not proof of fixed frequency or a confidence interval. All Artemisia native pairs pass, yielding about 5.20 extra TSC ticks/service. Four of six Charnwood TSC estimates are withheld for drift/mismatch while their simultaneous core-cycle estimates remain qualified. No individual observation is silently removed.
+TSC cost also requires effective cycle/TSC medians matching within 2\% and
+each condition's p90/p10 ratio $\leq1.02$. All six Artemisia native pairs
+pass (about 5.20 ticks/service); four of six Charnwood TSC estimates are
+withheld for drift/mismatch. Earlier shifted baselines remain documented.
+SGX layouts differ in timing, but unqualified protected counters limit that
+result to a translation-working-set contrast rather than a verified miss cost.
+\evidence{\artifact{results/q8-clock-charnwood-private/} (180 rows) and
+\artifact{results/q8-clock-artemisia/} (360 rows). Final derived quantities and
+qualification text are generated in \artifact{report/generated/q8-contrasts.csv}.}
 
-Final raw collections retain 360 observations on Artemisia (native/enclave) and 180 on Charnwood, with zero ordinary faults and six context-switch observations in each collection. Artemisia enclave compact/scattered medians are approximately 3.83--3.85 versus 9.06--9.44 ticks/load, but protected STLB-event coverage is unqualified. This is a same-machine translation-working-set contrast, not a separately verified enclave TLB-miss penalty. The final manifests are in \path{results/q8-clock-artemisia/} and \path{results/q8-clock-charnwood-private/}. Full hierarchy reconstruction is not selected.
-\begin{figure}[htbp]\centering
-\includegraphics[width=\textwidth]{results/q8-clock-comparison/Q8-cost-core-cycles.pdf}
-\caption{Q8 additional native core-cycle cost after compact-baseline subtraction and event-rate normalization; repetitions remain separate. No enclave estimate is invented.}
-\end{figure}
-
-\section{Reproduction, limitations and disclosure}
-Reproduction commands are in \texttt{README\_Track\_B.md}, \texttt{trackb/METHODS.md} and the preserved Q4 instructions. Raw campaign manifests retain source/binary hashes, exact commands, repetitions, native page/NUMA audits, sibling activity, ordinary disturbances and errors. Smoke data remain functional validation only. Published models/specifications remain separate from measured conclusions. Codex assisted with experiment/code/test design, hardware collection, methodological revisions, analysis, figures and report drafting. All performance rows are actual hardware observations; synthetic formula fixtures are explicitly unit tests. Full chronological assistance is disclosed in AI\_USE\_LOG.md. The accompanying ZIP includes this PDF, source, raw data, figures and plotting scripts, reproduction instructions and the AI-use log. Exact historical builds use each campaign's own source snapshot; current-source reruns are not silently pooled with them. Q4 reproduction uses the protected archive in a separate Charnwood worktree. The report states the remaining scientific attribution limits rather than filling them with published specifications.
-\section{Method references}
-The following are reference models and interface specifications, separate from measured results:
+\clearpage
+\section{Limitations, reproducibility and disclosure}\label{sec:reproduction}
+\subsection{What the evidence does and does not resolve}
+All six selected experiments have completed repeated native campaigns on both
+machines and corresponding Artemisia hardware-enclave campaigns. Completion
+of collection does not make every inferred physical quantity exact. The
+principal inference limits are specific:
 \begin{itemize}
-\item LLVM, \href{https://raw.githubusercontent.com/llvm/llvm-project/main/llvm/lib/Target/X86/X86SchedSkylakeClient.td}{Skylake client scheduling model} and \href{https://raw.githubusercontent.com/llvm/llvm-project/main/llvm/lib/Target/X86/X86SchedSapphireRapids.td}{Sapphire Rapids scheduling model}, for the selected IMUL resource model.
-\item Intel, \href{https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-2a-manual.pdf}{Instruction reference, Volume 2A}, for LFENCE ordering.
-\item Intel PerfMon, \href{https://raw.githubusercontent.com/intel/perfmon/main/SKL/events/skylake_core.json}{Skylake events} and \href{https://raw.githubusercontent.com/intel/perfmon/main/SPR/events/sapphirerapids_core.json}{Sapphire Rapids events}, for Q8 event definitions.
-\item Linux, \href{https://man7.org/linux/man-pages/man2/perf_event_open.2.html}{perf\_event\_open interface}, for counting groups and scheduling coverage.
-\item Linux, \href{https://docs.kernel.org/admin-guide/hw-vuln/core-scheduling.html}{core scheduling}, for inherited private task groups and their kernel/interrupt limits; \href{https://man7.org/linux/man-pages/man2/move_pages.2.html}{move\_pages}, for read-only per-page node queries.
+\item Q1's execution-unit resource bound comes from a cited model, not an experimental unit count; Q2's dependency/fence evidence supports ordering without instruction tracing.
+\item Q4 is an operational overlap-loss window, with uncontrolled SMT in its preserved Artemisia runs. Q5 identifies integer GPR pressure, with unresolved precise PRF attribution and total-size conversion.
+\item Q8's native class/cache/cycle criteria support its specific STLB-served miss cost. Protected event visibility is insufficient to transfer that attribution to SGX. Full TLB hierarchy reconstruction is not selected.
+\item PMU brackets differ slightly from TSC brackets. Frequency, kernel/IRQ/AEX activity, physical EPC placement and other cores' shared-memory traffic remain incompletely controlled. Context-switch/fault flags are observations, not complete interrupt tracing.
 \end{itemize}
+
+The failed or rejected paths remain visible: the early cross-iteration Q2
+prototype; stopped NUMA-accounting/SMT attempts; the constant-offset LEA
+allocation diagnostic; and the three-counter Q8 compact-baseline shift.
+They explain methodological choices without replacing the final evidence.
+The only requested setup artifact not located is the original SampleEnclave
+console log; the user confirmed it was not saved. Its success is explicitly
+identified as user-confirmed history, while custom hardware validation logs
+and benchmark runtime status are retained. No missing result is filled from
+published specifications.
+
+\subsection{Evidence map and reproduction}
+The repository is \url{https://github.com/vvenka25/ECE-592-Project-3}.
+Its \artifact{REPRODUCING.md} describes the hash-checked restoration of
+\artifact{data/raw-results.tar.gz}, which restores recorded manifests, raw
+CSVs, mapping audits and source snapshots under \artifact{results/}.
+Campaign manifests give commands, parameters, process seeds, CPU/node requests,
+source/binary hashes, failures and disturbances. Each question's evidence
+paragraph names the actual campaign. The report generator's input hashes and
+code-excerpt provenance are in \artifact{report/generated/artifact-audit.json}
+and \artifact{report/generated/source-excerpts.json}. No Project 1 content is
+an input to the figure/table generator.
+
+From the project root, restore data if using the public checkout and rebuild
+this report's numerical tables, vector figures and PDF:
+\begin{lstlisting}
+python3 data/unpack_results.py   # public checkout only; local data already present
+python3 -m pip install -r requirements.txt
+MPLCONFIGDIR=/tmp/hw3-mpl python3 report/make_report_artifacts.py
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report report/report.tex
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=report report/report.tex
+\end{lstlisting}
+The first command is not needed in the original workspace, where the raw
+files are already present. The local dependency is Matplotlib 3.9.4; plain
+pdfLaTeX builds the supplied figures and tables without executing Python.
+Historical analysis revisions remain alongside existing plots.
+
+\clearpage
+Fresh collection is distinct from regenerating figures. Recheck allowed CPUs,
+NUMA nodes and SMT state; use fresh output directories. These examples show
+new-suite validation and a planned Q3 run, not a request to repeat the completed
+campaigns:
+\begin{lstlisting}
+make -C trackb native
+TEST_CPU=12 make -C trackb check
+source /opt/intel/sgxsdk/environment
+make -C trackb native enclave
+TEST_CPU=12 TEST_SGX=1 make -C trackb check
+python3 trackb/run.py --question Q3 --cpu 12 --numa-node 0 \
+  --environment both --require-idle-sibling --out results/new-q3
+# Inspect the plan, then add --execute to collect new observations.
+\end{lstlisting}
+On Charnwood, the collection helper
+\artifact{report/collect_charnwood.sh} records private core scheduling and
+controller isolation. Follow Q3$\rightarrow$Q1$\rightarrow$Q2$\rightarrow$Q5$\rightarrow$Q8
+for a new collection, and choose Q5 fine bounds from that host's own coarse
+observations. Use the isolated
+\artifact{report/reproduce_q4_charnwood.py} for unchanged Q4 source; it refuses
+execution on Artemisia. Exact historical builds use each campaign's own
+source snapshot and toolchain. Current-source reruns are separate evidence.
+
+The generated suite contains 1,053 functions; retained validation checks
+semantics, shared native/enclave bytes, native/enclave-host timer assembly,
+Q8 page geometry, denied-PMU behavior and native page queries. Native
+functional checks do not imply hardware SGX execution: the latter requires
+\texttt{TEST\_SGX=1} and is documented in
+\artifact{results/trackb-four-counter-hardware-check.log}. Q4's preserved
+3,084-function checks and Charnwood timer audit are separate.
+
+\subsection{Overleaf, submission files and AI-use disclosure}
+The user-designated project is
+\url{https://www.overleaf.com/project/6aeeb80e5d4ccedd231a327b}.
+The accompanying Overleaf source ZIP includes \texttt{main.tex}, generated
+LaTeX tables, vector figures, source excerpts and build instructions. It
+compiles without fetching repository paths or running analysis online.
+The normal project URL is included; the private sharing token is omitted.
+No successful direct upload is claimed without an authenticated editing
+connection. Upload/import of the source ZIP remains a separate publishing
+step if such a connection is unavailable.
+
+The assignment requires a ZIP containing the PDF report, source, raw data,
+plotting scripts and reproduction instructions, plus an AI-use log for
+Track B~\cite{assignment}. The revised submission includes those groups and
+the original evidence. The earlier submission and Q4 preservation archive
+remain intact; the revised report and new figures are separate artifacts.
+GitHub's source-only preservation derivative excludes private signing keys
+and generated binaries while retaining the original non-build bytes.
+
+Codex assisted with benchmark/code/test design, hardware collection,
+methodological revisions, analysis, figures and report drafting, as recorded
+chronologically in \artifact{AI_USE_LOG.md}. For this revision it read the
+Project 1 PDF only to guide format, structure and explanation style, read
+\artifact{Homework_3.pdf} for requirements, and generated fresh diagrams and
+tables from Homework 3 sources and data. It did not copy Project 1 prose,
+measurements, code, artwork, conclusions or assignment-specific phases.
+No new performance campaign was run for this writing revision. Synthetic
+checks are labeled engineering tests, not measurements. The author must
+understand and be able to explain the submitted code and conclusions.
+
+\begin{thebibliography}{9}\small\raggedright
+\bibitem{assignment} ECE 492/592, \emph{Homework 3: Microarchitecture Reverse Engineering Across Machines}, Fall 2026. Supplied \texttt{Homework\_3.pdf}, pp. 2--4 (Track B selection and common submission requirements).
+\bibitem{sgx} Intel, \emph{Intel Software Guard Extensions Web-Based Training}, especially application partitioning and debug enclaves. \url{https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sgx-web-based-training.html}. Accessed November 7, 2026.
+\bibitem{llvm-skl} LLVM, \emph{Skylake Client scheduling model}, \texttt{WriteIMul64Imm} resource. \url{https://raw.githubusercontent.com/llvm/llvm-project/main/llvm/lib/Target/X86/X86SchedSkylakeClient.td}. Accessed November 7, 2026.
+\bibitem{llvm-spr} LLVM, \emph{Sapphire Rapids scheduling model}, \texttt{WriteIMul64Imm} resource. \url{https://raw.githubusercontent.com/llvm/llvm-project/main/llvm/lib/Target/X86/X86SchedSapphireRapids.td}. Accessed November 7, 2026.
+\bibitem{intel-isa} Intel, \emph{Intel 64 and IA-32 Architectures Software Developer's Manual, Instruction Set Reference}, LFENCE. \url{https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html}.
+\bibitem{perf-skl} Intel PerfMon, \emph{Skylake core event definitions}, DTLB load-miss/STLB-hit, completed walks and retired L1D misses. \url{https://raw.githubusercontent.com/intel/perfmon/main/SKL/events/skylake_core.json}. Accessed November 7, 2026.
+\bibitem{perf-spr} Intel PerfMon, \emph{Sapphire Rapids core event definitions}. \url{https://raw.githubusercontent.com/intel/perfmon/main/SPR/events/sapphirerapids_core.json}. Accessed November 7, 2026.
+\bibitem{coresched} Linux kernel documentation, \emph{Core Scheduling}. \url{https://docs.kernel.org/admin-guide/hw-vuln/core-scheduling.html}.
+\bibitem{movepages} Linux man-pages project, \emph{move\_pages(2)}. \url{https://man7.org/linux/man-pages/man2/move_pages.2.html}.
+\end{thebibliography}
 \end{document}
