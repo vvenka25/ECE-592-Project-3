@@ -1,0 +1,22 @@
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+mkdir -p build
+python3 gen_kernels.py build
+touch build/generated
+gcc -c build/kernels.S -o build/kernels.o
+python3 build_id.py build/build_id.h engine.c entry.c main.c pmu.c bench.h pmu.h enclave.edl Enclave.config.xml Enclave.lds gen_kernels.py build_id.py Makefile
+gcc -O2 -Wall -Wextra -Werror -I. -Ibuild main.c engine.c pmu.c build/dispatch.c build/kernels.o -o build/trackb-native
+gcc -O2 -Wall -Wextra -Werror -I. -Ibuild ../src/platform.c -o build/platform-info
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+cd .. && python3 trackb/check.py
+Q3: retained conditional branch, matched arms, branchless control and exact outcome counts passed
+Q1: fixed multiply count, dependency streams and exact modular arithmetic passed
+Q2: older blocked operation precedes younger work; dependency/fence controls and live results passed
+Q5: 64-bit GPR LEA/NOP controls, two rings, serial traversal and filler results passed
+Q8: compact/scattered page geometry, equal cache-line footprint and full-cycle traversal passed
+trackb/build/trackb-native: five-question CSV smoke checks passed
+Native read-only per-page residency metadata passed; no page migration requested.
+PMU denial: auto records unavailable/blank counts; required fails before samples.
+Native timer boundary assembly and 1053 kernel bodies verified; no timing magnitude asserted.
+Enclave byte comparison unavailable: no linked enclave in this build.
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'

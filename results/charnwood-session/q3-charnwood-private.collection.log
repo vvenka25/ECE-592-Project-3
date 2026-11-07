@@ -1,0 +1,20 @@
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+make: Nothing to be done for 'native'.
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+[1/16] Q3-r2-branch-alternating-native
+[2/16] Q3-r1-branchless-alternating-native
+[3/16] Q3-r2-branch-shuffled-seed2-native
+[4/16] Q3-r2-branch-always-one-native
+[5/16] Q3-r2-branchless-shuffled-native
+[6/16] Q3-r1-branch-shuffled-native
+[7/16] Q3-r1-branch-always-zero-native
+[8/16] Q3-r2-branch-always-zero-native
+[9/16] Q3-r2-branchless-alternating-native
+[10/16] Q3-r1-branch-alternating-native
+[11/16] Q3-r2-branchless-shuffled-seed2-native
+[12/16] Q3-r1-branchless-shuffled-native
+[13/16] Q3-r2-branch-shuffled-native
+[14/16] Q3-r1-branch-always-one-native
+[15/16] Q3-r1-branch-shuffled-seed2-native
+[16/16] Q3-r1-branchless-shuffled-seed2-native
+Saved 16 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/results/q3-charnwood-private; run trackb/review.py before inferring results.

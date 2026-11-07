@@ -1,0 +1,2 @@
+# Version used for the archived figures; Python 3.9 or newer.
+matplotlib==3.9.4

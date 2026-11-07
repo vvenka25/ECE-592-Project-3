@@ -1,0 +1,32 @@
+make: Entering directory '/home/vvenka25/HW3/trackb'
+/opt/intel/sgxsdk/bin/x64/sgx_sign sign -key build/debug-key.pem -enclave build/suite.so -out build/suite.signed.so -config Enclave.config.xml
+tcs_num 1, tcs_max_num 1, tcs_min_pool 1
+[0;32mINFO: Enclave configuration 'MiscSelect' and 'MiscSelectMask' will prevent enclave from using dynamic features. To use the dynamic features on SGX2 platform, suggest to set MiscMask[0]=0 and MiscSelect[0]=1.
+[0mThe required memory is 404828160B.
+The required memory is 0x18213000, 395340 KB.
+handle_compatible_metadata: Overwrite with metadata version 0x100000004
+Succeed.
+<EnclaveConfiguration>
+    <ProdID>0</ProdID>
+    <ISVSVN>0</ISVSVN>
+    <StackMaxSize>0x40000</StackMaxSize>
+    <HeapMaxSize>0x18000000</HeapMaxSize>
+    <TCSNum>1</TCSNum>
+    <TCSPolicy>1</TCSPolicy>
+    <DisableDebug>0</DisableDebug>
+    <MiscSelect>0</MiscSelect>
+    <MiscMask>0xFFFFFFFF</MiscMask>
+</EnclaveConfiguration>
+gcc -O2 -Wall -Wextra -Werror -I. -Ibuild -I/opt/intel/sgxsdk/include -DENCLAVE main.c pmu.c build/dispatch.c build/kernels.o build/enclave_u.c -L/opt/intel/sgxsdk/lib64 -lsgx_urts -o build/trackb-enclave
+cd .. && python3 trackb/check.py
+Q3: retained conditional branch, matched arms, branchless control and exact outcome counts passed
+Q1: fixed multiply count, dependency streams and exact modular arithmetic passed
+Q2: older blocked operation precedes younger work; dependency/fence controls and live results passed
+Q5: 64-bit GPR LEA/NOP controls, two rings, serial traversal and filler results passed
+Q8: compact/scattered page geometry, equal cache-line footprint and full-cycle traversal passed
+trackb/build/trackb-native: five-question CSV smoke checks passed
+trackb/build/trackb-enclave: five-question CSV smoke checks passed
+PMU denial: auto records unavailable/blank counts; required fails before samples.
+Timer boundary assembly and 795 shared native/enclave kernel bodies verified; no timing magnitude asserted.
+Separate enclave-host timer brackets verified around suite_run; this is assembly inspection, not SGX execution.
+make: Leaving directory '/home/vvenka25/HW3/trackb'

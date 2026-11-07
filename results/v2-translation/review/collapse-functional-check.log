@@ -1,0 +1,5 @@
+method=rob-v2 build=81ba98b99589d5e0 run=1793964736-10 host=artemisia.ece.ncsu.edu cpu=1 footprint=268435456 span=268435456 pages=collapse
+native data mapping: 0x7fcf32200000..0x7fcf42200000; verify THP/NUMA in snapshots
+THP verification before: AnonHugePages=262144 KiB; required=262144 KiB
+warmup: full data traversal at N=0 and 64 selected-kernel iterations per condition; continuous cursors
+THP verification after: AnonHugePages=262144 KiB; required=262144 KiB

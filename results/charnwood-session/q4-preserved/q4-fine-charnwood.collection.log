@@ -1,0 +1,5 @@
+Preparing benchmark build: make native
+make: Nothing to be done for 'native'.
+[1/1] 00-candidate-native
+  00-candidate-native: running, 15s elapsed
+Saved 1 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/q4-preserved/results/q4-fine-charnwood. Review raw samples and controls before proceeding.

@@ -1,0 +1,2 @@
+question=Q8 method=trackb-v1 build=adba21210194f62f host=artemisia.ece.ncsu.edu cpu=12 pages=epc span=1048576
+enclave data mapping: 0x7efd2026d000..0x7efd2036d000

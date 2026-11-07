@@ -1,0 +1,16 @@
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+make: Nothing to be done for 'native'.
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+[1/12] Q8-r2-compact-256-native
+[2/12] Q8-r2-compact-128-native
+[3/12] Q8-r1-scattered-256-native
+[4/12] Q8-r2-scattered-384-native
+[5/12] Q8-r1-compact-128-native
+[6/12] Q8-r2-compact-384-native
+[7/12] Q8-r1-scattered-128-native
+[8/12] Q8-r1-compact-256-native
+[9/12] Q8-r1-compact-384-native
+[10/12] Q8-r1-scattered-384-native
+[11/12] Q8-r2-scattered-256-native
+[12/12] Q8-r2-scattered-128-native
+Saved 12 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/results/q8-clock-charnwood-private; run trackb/review.py before inferring results.

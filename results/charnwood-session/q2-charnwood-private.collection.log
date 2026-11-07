@@ -1,0 +1,22 @@
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+make: Nothing to be done for 'native'.
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+[1/18] Q2-r1-fenced-hot-k64-native
+[2/18] Q2-r1-serial-cold-k0-native
+[3/18] Q2-r1-fenced-cold-k0-native
+[4/18] Q2-r1-serial-hot-k64-native
+[5/18] Q2-r2-fenced-cold-k0-native
+[6/18] Q2-r2-fenced-cold-k64-native
+[7/18] Q2-r1-overlap-hot-k64-native
+[8/18] Q2-r2-serial-cold-k0-native
+[9/18] Q2-r1-overlap-cold-k0-native
+[10/18] Q2-r1-overlap-cold-k64-native
+[11/18] Q2-r2-serial-cold-k64-native
+[12/18] Q2-r2-overlap-cold-k64-native
+[13/18] Q2-r2-fenced-hot-k64-native
+[14/18] Q2-r2-overlap-cold-k0-native
+[15/18] Q2-r2-serial-hot-k64-native
+[16/18] Q2-r2-overlap-hot-k64-native
+[17/18] Q2-r1-serial-cold-k64-native
+[18/18] Q2-r1-fenced-cold-k64-native
+Saved 18 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/results/q2-charnwood-private; run trackb/review.py before inferring results.

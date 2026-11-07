@@ -1,0 +1,3 @@
+method=rob-v2 build=3547cc1ae6021325 run=translation-01-pages-huge-native host=artemisia.ece.ncsu.edu cpu=1 footprint=268435456 span=268435456 pages=huge
+native data mapping: 0x7f3a8fe00000..0x7f3a9fe00000; verify THP/NUMA in snapshots
+warmup: full data traversal at N=0 and 64 selected-kernel iterations per condition; continuous cursors

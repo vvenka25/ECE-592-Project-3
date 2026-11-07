@@ -1,0 +1,3 @@
+method=rob-v2 build=bcd9d621feed36f6 run=frontend-00-frontend-16KiB-native host=artemisia.ece.ncsu.edu cpu=1 footprint=16384 span=16384 pages=4k
+native data mapping: 0x7f7673238000..0x7f767323c000; verify THP/NUMA in snapshots
+warmup: full data traversal at N=0 and 64 selected-kernel iterations per condition; continuous cursors

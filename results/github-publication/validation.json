@@ -1,0 +1,19 @@
+{
+  "checked_utc": "2026-11-07T05:36:11.658046+00:00",
+  "scope": "Public source-only GitHub publication; no new performance campaign",
+  "restored_files": 5330,
+  "restore": "passed",
+  "repeated_restore": "passed, zero additional writes",
+  "different_observations": "refused before overwrite; original bytes restored",
+  "public_q4_preservation": "805 immutable non-build files passed",
+  "native_build_and_semantics": "passed, 1053 bodies; CPU 13; native page queries",
+  "all_six_comparisons": "regenerated from original raw rows; passed",
+  "analysis_synthetic_checks": "passed",
+  "report_compilation": "passed; 15 pages; no overfull layout warnings",
+  "local_full_archive": "unchanged",
+  "local_submission_zip_sha256": "4f4b599381c58f3e638c78d3a6125625c133d4714cc5716954f809da2c7ac44c",
+  "data_archive_sha256": "83c850b40780b4403e84cd46f1e4ba0d3480e8e05d8bc4e656efd9e9836884a9",
+  "source_only_q4_archive_sha256": "2b8c30d4bd23b08ddd5ed0a88db492613edc37ba5109f8bc81dd9fdf6e6fc77e",
+  "credentials_and_generated_binaries": "excluded; archives inspected recursively",
+  "reproduced_submission_package": "passed; source-only publication derivative, not claimed identical to original ZIP"
+}

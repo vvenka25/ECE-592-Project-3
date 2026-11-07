@@ -1,0 +1,14 @@
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+make: Nothing to be done for 'native'.
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+[1/10] Q5-r2-gpr-lea1-native
+[2/10] Q5-r2-nop-window-control-native
+[3/10] Q5-r1-nop-window-control-native
+[4/10] Q5-r1-gpr-lea4-dependent-native
+[5/10] Q5-r1-gpr-lea1-native
+[6/10] Q5-r1-gpr-lea8-native
+[7/10] Q5-r2-gpr-lea4-native
+[8/10] Q5-r2-gpr-lea8-native
+[9/10] Q5-r1-gpr-lea4-native
+[10/10] Q5-r2-gpr-lea4-dependent-native
+Saved 10 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/results/q5-fine-charnwood-private; run trackb/review.py before inferring results.

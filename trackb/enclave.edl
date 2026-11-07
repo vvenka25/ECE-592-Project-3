@@ -1,0 +1,9 @@
+enclave {
+    trusted {
+        public int suite_init(uint64_t question,uint64_t mode,uint64_t param,uint64_t footprint,uint64_t seed);
+        public uint64_t suite_run(unsigned mode,unsigned param,uint64_t iterations);
+        public int suite_warm(unsigned mode,unsigned param);
+        public uint64_t suite_result(unsigned which);
+        public void suite_free();
+    };
+};

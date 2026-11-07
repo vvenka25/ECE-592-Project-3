@@ -1,0 +1,2 @@
+# Decompressed rows/audits are restored under results/ by data/unpack_results.py.
+# Keep the compressed archive and its hash inventory under version control.

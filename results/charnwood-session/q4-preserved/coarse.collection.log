@@ -1,0 +1,10 @@
+Preparing benchmark build: make native
+make: Nothing to be done for 'native'.
+[1/1] 00-baseline-native
+  00-baseline-native: running, 15s elapsed
+  00-baseline-native: running, 30s elapsed
+  00-baseline-native: running, 45s elapsed
+  00-baseline-native: running, 60s elapsed
+  00-baseline-native: running, 75s elapsed
+  00-baseline-native: running, 90s elapsed
+Saved 1 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/q4-preserved/results/q4-coarse-charnwood. Review raw samples and controls before proceeding.

@@ -1,0 +1,100 @@
+Linux charnwood.ece.ncsu.edu 6.8.0-101-generic #101-Ubuntu SMP PREEMPT_DYNAMIC Mon Feb  9 10:15:05 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+Architecture:                            x86_64
+CPU op-mode(s):                          32-bit, 64-bit
+Address sizes:                           39 bits physical, 48 bits virtual
+Byte Order:                              Little Endian
+CPU(s):                                  8
+On-line CPU(s) list:                     0-7
+Vendor ID:                               GenuineIntel
+Model name:                              Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
+CPU family:                              6
+Model:                                   94
+Thread(s) per core:                      2
+Core(s) per socket:                      4
+Socket(s):                               1
+Stepping:                                3
+CPU(s) scaling MHz:                      47%
+CPU max MHz:                             4000.0000
+CPU min MHz:                             800.0000
+BogoMIPS:                                6799.81
+Flags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb pti ssbd ibrs ibpb stibp tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust sgx bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp vnmi md_clear flush_l1d arch_capabilities ibpb_exit_to_user
+Virtualization:                          VT-x
+L1d cache:                               128 KiB (4 instances)
+L1i cache:                               128 KiB (4 instances)
+L2 cache:                                1 MiB (4 instances)
+L3 cache:                                8 MiB (1 instance)
+NUMA node(s):                            1
+NUMA node0 CPU(s):                       0-7
+Vulnerability Gather data sampling:      Vulnerable: No microcode
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             KVM: Mitigation: VMX disabled
+Vulnerability L1tf:                      Mitigation; PTE Inversion; VMX conditional cache flushes, SMT vulnerable
+Vulnerability Mds:                       Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Meltdown:                  Mitigation; PTI
+Vulnerability Mmio stale data:           Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Mitigation; IBRS
+Vulnerability Spec rstack overflow:      Not affected
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; IBRS; IBPB conditional; STIBP conditional; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                     Mitigation; Microcode
+Vulnerability Tsa:                       Not affected
+Vulnerability Tsx async abort:           Mitigation; TSX disabled
+Vulnerability Vmscape:                   Mitigation; IBPB before exit to userspace
+CPU CORE SOCKET NODE ONLINE
+  0    0      0    0    yes
+  1    1      0    0    yes
+  2    2      0    0    yes
+  3    3      0    0    yes
+  4    0      0    0    yes
+  5    1      0    0    yes
+  6    2      0    0    yes
+  7    3      0    0    yes
+4096
+always [madvise] never
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
+CPU affinity and memory policy
+Cpus_allowed_list:	0-1
+Mems_allowed_list:	0
+/sys/devices/system/cpu/cpu0/topology/thread_siblings_list: 0,4
+/sys/devices/system/cpu/cpu1/topology/thread_siblings_list: 1,5
+/sys/devices/system/cpu/cpu2/topology/thread_siblings_list: 2,6
+/sys/devices/system/cpu/cpu3/topology/thread_siblings_list: 3,7
+/sys/devices/system/cpu/cpu4/topology/thread_siblings_list: 0,4
+/sys/devices/system/cpu/cpu5/topology/thread_siblings_list: 1,5
+/sys/devices/system/cpu/cpu6/topology/thread_siblings_list: 2,6
+/sys/devices/system/cpu/cpu7/topology/thread_siblings_list: 3,7
+policy: default
+preferred node: current
+physcpubind: 0 1 
+cpubind: 0 
+nodebind: 0 
+membind: 0 
+preferred: 
+
+Source and binary hashes
+edca612732619c4348df3b9d22ccab55040f6afc9d82ecea23ffeab9613271c5  enclave/entry.c
+2971ebfe3fb975733f638bcb360751756f9e98e1e6bd27d87ee4be92056b4b51  enclave/Rob.config.xml
+b18874fb72fa07fc10557dd6669162e9799dbcd18529be663be2ec4ae51e8624  enclave/Rob.edl
+a4d8213b7d0392d32c8f83589ee13b2abe5f866f05ab77183bb92bc73ad626d9  enclave/Rob.lds
+a24431133e92f39cc1b69c140d3ec636a4f8382f4db540c7437fe7f9782b5c63  scripts/build_id.py
+fdb6a86501a1f6b888cc4844f40a6ab08571d441ce05db34eac3ffe9a060a9fd  scripts/gen_kernels.py
+381a248b61ba2a4155b766fe867c533a74f3060d2ac831681829c51a588188c9  scripts/metadata.sh
+e9cd91c8e8716c09e4850a8a8a21379cced701500e1d359eeafb0529d079ecf2  scripts/plot_rob.py
+a3a0c4ecc289c530bbac4c0642b75dbbd5c4b4966ebaa3e184ea9c9eb8ea9ab4  scripts/preflight.py
+9f8b7ac60c041f5a508fbb617041e4b49b0d46f33aff0e56d68405c8ae60a2e2  scripts/run_rob.py
+637724770acea4a32c54d0169a51a05f60628fec4dc5a1291a3f24431ab98383  src/common.c
+4e3c7a8c38cc77d2ae6b374ee8fdbdf8b281460b5d3232e0e983bc3a9fd6f774  src/common.h
+537fe31ac6dc4178c7e90c1493ccaf8a408744ec44382edc3084d085426279c3  src/main.c
+a84999baab9ecdf8265351fdd42b345991f55920d8118617477dda5b6d4db63c  src/platform.c
+a5aa1b4201bdd1ba5a97d2fd7e92d5d0e2aac7673f302ff5919b1efba3ff486e  tests/check.py
+2916808628e89ebc0a7949cacc7843f9a14b46c96c4ec738a51e0302a85488c0  Makefile
+7b5397ac26315a4aedf12ac8fbd1c560f205ac879401c63540450bbc5ca333ac  build/rob-native
+
+SGX package metadata (if packaged)

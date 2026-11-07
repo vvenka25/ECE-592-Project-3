@@ -1,0 +1,3 @@
+method=rob-v2 build=3547cc1ae6021325 run=prefetch-03-stride-128-native host=artemisia.ece.ncsu.edu cpu=1 footprint=268435456 span=536870912 pages=4k
+native data mapping: 0x7fa719000000..0x7fa739000000; verify THP/NUMA in snapshots
+warmup: full data traversal at N=0 and 64 selected-kernel iterations per condition; continuous cursors

@@ -1,0 +1,7 @@
+enclave {
+    trusted {
+        public int rob_init(size_t bytes, uint64_t seed, unsigned stride);
+        public uint64_t rob_run(unsigned n, unsigned dependent, uint64_t iterations, unsigned nop_bytes, unsigned alignment);
+        public void rob_free();
+    };
+};

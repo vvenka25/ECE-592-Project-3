@@ -1,0 +1,12 @@
+make: Entering directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+make: Nothing to be done for 'native'.
+make: Leaving directory '/tmp/hw3-trackb-vvenka25-Xyl79rmK/trackb'
+[1/8] Q1-r2-2-chains-native
+[2/8] Q1-r1-zero-work-native
+[3/8] Q1-r2-1-chains-native
+[4/8] Q1-r1-2-chains-native
+[5/8] Q1-r1-4-chains-native
+[6/8] Q1-r2-4-chains-native
+[7/8] Q1-r2-zero-work-native
+[8/8] Q1-r1-1-chains-native
+Saved 8 jobs to /tmp/hw3-trackb-vvenka25-Xyl79rmK/results/q1-charnwood-private; run trackb/review.py before inferring results.

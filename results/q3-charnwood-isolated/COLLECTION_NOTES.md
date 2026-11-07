@@ -1,0 +1,1 @@
+This intermediate collector-isolation attempt stopped at the preserved preflight helper affinity check before any benchmark job or raw sample. The helper integration is corrected in a fresh directory; no Q4 source was modified.

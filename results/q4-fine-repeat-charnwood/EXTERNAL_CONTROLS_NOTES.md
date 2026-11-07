@@ -1,0 +1,1 @@
+The nested core_scheduling object records initial setup/coarse provenance. The fine wrapper recorded its own actual inherited group in top-level core_scheduling_cookie; that overrides the setup cookie for this process. Both are nonzero per-task groups; no global configuration was changed.

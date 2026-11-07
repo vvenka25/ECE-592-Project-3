@@ -1,0 +1,11 @@
+mkdir -p build
+python3 scripts/build_id.py build/build_id.h src/common.c src/common.h src/main.c src/platform.c enclave/entry.c enclave/Rob.config.xml enclave/Rob.edl enclave/Rob.lds scripts/build_id.py scripts/gen_kernels.py scripts/plot_rob.py scripts/preflight.py scripts/run_rob.py scripts/metadata.sh Makefile
+python3 scripts/gen_kernels.py build
+touch build/generated
+gcc -c build/kernels.S -o build/kernels.o
+gcc -O2 -Wall -Wextra -Werror -Isrc -Ibuild src/main.c src/common.c build/dispatch.c build/kernels.o -o build/rob-native
+gcc -O2 -Wall -Wextra -Werror -Isrc -Ibuild src/platform.c -o build/platform-info
+python3 tests/check.py
+build/rob-native: CSV, continuous cursors and metadata smoke checks passed
+3084 kernel bodies, alignment, native/enclave bytes, pointer cycles and traversal semantics passed
+Strict THP allocation-failure and partial-backing rejection checks passed

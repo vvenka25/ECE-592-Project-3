@@ -1,0 +1,17 @@
+make: Entering directory '/home/vvenka25/HW3/trackb'
+python3 build_id.py build/build_id.h engine.c entry.c main.c pmu.c bench.h pmu.h enclave.edl Enclave.config.xml Enclave.lds gen_kernels.py build_id.py Makefile
+gcc -O2 -Wall -Wextra -Werror -I. -Ibuild main.c engine.c pmu.c build/dispatch.c build/kernels.o -o build/trackb-native
+gcc -O2 -Wall -Wextra -Werror -I. -Ibuild -I/opt/intel/sgxsdk/include -DENCLAVE main.c pmu.c build/dispatch.c build/kernels.o build/enclave_u.c -L/opt/intel/sgxsdk/lib64 -lsgx_urts -o build/trackb-enclave
+cd .. && python3 trackb/check.py
+Q3: retained conditional branch, matched arms, branchless control and exact outcome counts passed
+Q1: fixed multiply count, dependency streams and exact modular arithmetic passed
+Q2: older blocked operation precedes younger work; dependency/fence controls and live results passed
+Q5: 64-bit GPR LEA/NOP controls, two rings, serial traversal and filler results passed
+Q8: compact/scattered page geometry, equal cache-line footprint and full-cycle traversal passed
+trackb/build/trackb-native: five-question CSV smoke checks passed
+trackb/build/trackb-enclave: five-question CSV smoke checks passed
+PMU denial: auto records unavailable/blank counts; required fails before samples.
+Native timer boundary assembly and 795 kernel bodies verified; no timing magnitude asserted.
+795 native/enclave kernel byte comparisons passed.
+Separate enclave-host timer brackets verified around suite_run; this is assembly inspection, not SGX execution.
+make: Leaving directory '/home/vvenka25/HW3/trackb'

@@ -1,0 +1,29 @@
+{
+  "purpose": "unchanged preserved Q4 source for missing Charnwood native comparison; no Artemisia rerun",
+  "sha256": "c03300733593543d967d0b1b002064dcb93d1eb949ca851c75ea520822fdd37f",
+  "files_sha256": {
+    "Makefile": "2916808628e89ebc0a7949cacc7843f9a14b46c96c4ec738a51e0302a85488c0",
+    "ROB_BENCHMARK.md": "2610fb13470d2b68dd208c526396df10c675d5b07a4bd345964dc690e005d536",
+    "ROB_RESULTS_ARTEMISIA.md": "9b2e4fb1f2d6243b55fae15bf4d11f6dfa5f5805bc33b5f1c07cc8693f6b71e6",
+    "analysis/compare_calibrations.py": "e81fc3095e01b21d3cfb77367bdfc925722e13850da05faab703e90e59cad80d",
+    "analysis/compare_sweeps.py": "572592f4c526951120ecf696bfc96365ed4f2a021c7247bf5cba4e38c836c84f",
+    "analysis/review_calibration.py": "12c0b317cf949d5bb8e046c94d24d7af6f26ecb0f08604eb11e9327965ccc2f6",
+    "analysis/review_overhead.py": "cc47c6bb26bd6498587dfc5aba24b5ed1bc4f401ed64d5224eb342c460b68eaa",
+    "analysis/review_sweep.py": "8a44f2b1fe7d512dd8e7ff4c87f26dd603ea9d26c0c61043865cd3233723e696",
+    "enclave/Rob.config.xml": "2971ebfe3fb975733f638bcb360751756f9e98e1e6bd27d87ee4be92056b4b51",
+    "enclave/Rob.edl": "b18874fb72fa07fc10557dd6669162e9799dbcd18529be663be2ec4ae51e8624",
+    "enclave/Rob.lds": "a4d8213b7d0392d32c8f83589ee13b2abe5f866f05ab77183bb92bc73ad626d9",
+    "enclave/entry.c": "edca612732619c4348df3b9d22ccab55040f6afc9d82ecea23ffeab9613271c5",
+    "scripts/build_id.py": "a24431133e92f39cc1b69c140d3ec636a4f8382f4db540c7437fe7f9782b5c63",
+    "scripts/gen_kernels.py": "fdb6a86501a1f6b888cc4844f40a6ab08571d441ce05db34eac3ffe9a060a9fd",
+    "scripts/metadata.sh": "381a248b61ba2a4155b766fe867c533a74f3060d2ac831681829c51a588188c9",
+    "scripts/plot_rob.py": "e9cd91c8e8716c09e4850a8a8a21379cced701500e1d359eeafb0529d079ecf2",
+    "scripts/preflight.py": "a3a0c4ecc289c530bbac4c0642b75dbbd5c4b4966ebaa3e184ea9c9eb8ea9ab4",
+    "scripts/run_rob.py": "9f8b7ac60c041f5a508fbb617041e4b49b0d46f33aff0e56d68405c8ae60a2e2",
+    "src/common.c": "637724770acea4a32c54d0169a51a05f60628fec4dc5a1291a3f24431ab98383",
+    "src/common.h": "4e3c7a8c38cc77d2ae6b374ee8fdbdf8b281460b5d3232e0e983bc3a9fd6f774",
+    "src/main.c": "537fe31ac6dc4178c7e90c1493ccaf8a408744ec44382edc3084d085426279c3",
+    "src/platform.c": "a84999baab9ecdf8265351fdd42b345991f55920d8118617477dda5b6d4db63c",
+    "tests/check.py": "a5aa1b4201bdd1ba5a97d2fd7e92d5d0e2aac7673f302ff5919b1efba3ff486e"
+  }
+}

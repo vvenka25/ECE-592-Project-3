@@ -1,0 +1,2 @@
+method=rob-v2 build=3547cc1ae6021325 run=calibration-00-footprint-16KiB-enclave host=artemisia.ece.ncsu.edu cpu=1 footprint=16384 span=16384 pages=epc
+warmup: full data traversal at N=0 and 64 selected-kernel iterations per condition; continuous cursors
